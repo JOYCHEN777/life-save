@@ -1822,7 +1822,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   #life-save-tactile .st-history { margin: 0; padding: 12px 0 0; list-style: none; }
   #life-save-tactile .st-history li { padding: 8px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
   #life-save-tactile .st-preview { margin-top: 6px; text-align: center; color: var(--st-muted); font-size: 11px; }
-  #life-save-tactile .st-replay { padding: 6px 8px; min-height: 44px; margin-bottom: 3px; border: 0; background: transparent; color: var(--st-ink); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+  #life-save-tactile .st-error { color: light-dark(#a52c24,#ffada6); font-size: 13px; margin: 12px 0 0; }
   #life-save-tactile.is-playing .st-time { animation: st-number 430ms cubic-bezier(.2,.8,.3,1); }
   #life-save-tactile.is-playing .st-status-icon { animation: st-check 500ms cubic-bezier(.2,.8,.3,1); }
   #life-save-tactile.is-playing .st-record { animation: st-release 330ms cubic-bezier(.18,.8,.3,1); }
@@ -1840,29 +1840,30 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;div id=&quot;life-save-tactile&quot; class=&quot;viz-dotted-background&quot; data-strength=&quot;crisp&quot;&gt;
   &lt;section class=&quot;st-app&quot; aria-label=&quot;随手存档即时反馈体验&quot;&gt;
     &lt;header class=&quot;st-header&quot;&gt;
-      &lt;div&gt;&lt;div class=&quot;st-brand&quot;&gt;随手存档&lt;/div&gt;&lt;div class=&quot;st-sub&quot;&gt;交互示意 · 示例数据&lt;/div&gt;&lt;/div&gt;
+      &lt;div&gt;&lt;div class=&quot;st-brand&quot;&gt;随手存档&lt;/div&gt;&lt;div class=&quot;st-sub&quot;&gt;本机试用 · 随时再记&lt;/div&gt;&lt;/div&gt;
       &lt;button class=&quot;st-sound cursor-interaction&quot; type=&quot;button&quot; data-action=&quot;sound&quot; aria-pressed=&quot;false&quot; aria-label=&quot;开启音效&quot;&gt;&lt;i data-lucide=&quot;volume-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span data-part=&quot;sound-label&quot;&gt;音效 关&lt;/span&gt;&lt;/button&gt;
     &lt;/header&gt;
     &lt;section class=&quot;st-card&quot; aria-label=&quot;过敏药记录卡&quot;&gt;
       &lt;div class=&quot;st-category&quot;&gt;&lt;i data-lucide=&quot;pill&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;过敏药&lt;/div&gt;
       &lt;div aria-live=&quot;polite&quot; aria-atomic=&quot;true&quot;&gt;
         &lt;div class=&quot;st-label&quot;&gt;距上次服药记录&lt;/div&gt;
-        &lt;div class=&quot;st-time&quot; data-part=&quot;elapsed&quot;&gt;1 天 6 小时&lt;/div&gt;
-        &lt;div class=&quot;st-stamp&quot; data-part=&quot;stamp&quot;&gt;10 月 21 日 · 14:00&lt;/div&gt;
+        &lt;div class=&quot;st-time&quot; data-part=&quot;elapsed&quot;&gt;还没有记录&lt;/div&gt;
+        &lt;div class=&quot;st-stamp&quot; data-part=&quot;stamp&quot;&gt;记录后，这里会显示上次时间。&lt;/div&gt;
       &lt;/div&gt;
       &lt;div class=&quot;st-button-wrap&quot;&gt;
         &lt;button class=&quot;st-record cursor-interaction&quot; type=&quot;button&quot; data-action=&quot;record&quot;&gt;&lt;span data-part=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;i data-lucide=&quot;plus&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span data-part=&quot;check&quot; aria-hidden=&quot;true&quot; hidden&gt;&lt;i data-lucide=&quot;check&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span data-part=&quot;record-label&quot;&gt;我已服药，记一下&lt;/span&gt;&lt;/button&gt;
         &lt;span class=&quot;st-done-bubble&quot; aria-hidden=&quot;true&quot;&gt;记住啦！&lt;/span&gt;
         &lt;div class=&quot;st-burst&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div class=&quot;st-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;history&quot; aria-controls=&quot;st-history-list&quot; aria-expanded=&quot;false&quot;&gt;查看记录&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;undo&quot; hidden&gt;撤销本次&lt;/button&gt;&lt;/div&gt;
+      &lt;p class=&quot;st-error&quot; data-part=&quot;error&quot; role=&quot;alert&quot; hidden&gt;&lt;/p&gt;
+      &lt;div class=&quot;st-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;history&quot; aria-controls=&quot;st-history-list&quot; aria-expanded=&quot;false&quot;&gt;查看记录（0）&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;undo&quot; hidden&gt;撤销最近一次&lt;/button&gt;&lt;/div&gt;
       &lt;ul class=&quot;st-history&quot; id=&quot;st-history-list&quot; hidden&gt;&lt;/ul&gt;
     &lt;/section&gt;
     &lt;div class=&quot;st-status&quot; aria-live=&quot;polite&quot; aria-atomic=&quot;true&quot;&gt;
       &lt;div class=&quot;st-status-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;span data-part=&quot;status-idle&quot;&gt;&lt;i data-lucide=&quot;bookmark&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span data-part=&quot;status-done&quot; hidden&gt;&lt;i data-lucide=&quot;check-check&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;
       &lt;div&gt;&lt;div class=&quot;st-status-title&quot; data-part=&quot;status-title&quot;&gt;点一下，这件事就记住了&lt;/div&gt;&lt;div class=&quot;st-status-desc&quot; data-part=&quot;status-desc&quot;&gt;下次想知道，打开就能看见。&lt;/div&gt;&lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;st-preview&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;st-replay cursor-interaction&quot; data-action=&quot;replay&quot; hidden&gt;再体验一次 · 不新增记录&lt;/button&gt;&lt;div&gt;仅演示交互，不保存真实用药记录&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;st-preview&quot;&gt;记录保存在当前浏览器 · 清除浏览器数据会丢失&lt;/div&gt;
   &lt;/section&gt;
 &lt;/div&gt;
 &lt;script&gt;
@@ -1876,7 +1877,14 @@ html&gt;body{padding:0}&lt;/style&gt;
   const list = root.querySelector(&#x27;#st-history-list&#x27;);
   const burst = root.querySelector(&#x27;.st-burst&#x27;);
   const settings = { strength: &#x27;crisp&#x27;, sound: false };
-  const state = { recorded: false, historyOpen: false };
+  const state = { entries: [], historyOpen: false };
+  const cooldownMs = 800;
+  let writing = false;
+  let readyAt = 0;
+  let feedbackTimer;
+  let message = &#x27;&#x27;;
+  let storageError = &#x27;&#x27;;
+  let incompatibleState = false;
   let audioContext;
   let audioUnavailable = false;
   let playingAudio = false;
@@ -1891,43 +1899,88 @@ html&gt;body{padding:0}&lt;/style&gt;
   });
   function applySaved(saved) {
     const value = saved &amp;&amp; saved.privateContent;
-    if (!value || value.demo !== &#x27;life-save-tactile-v1&#x27;) return;
-    state.recorded = value.recorded === true;
-    state.historyOpen = value.historyOpen === true;
+    if (!value) return;
+    // The old boolean represented a fixed, fictional example, not a real event.
+    if (value.demo === &#x27;life-save-tactile-v1&#x27;) {
+      settings.sound = value.sound === true;
+      settings.strength = value.strength === &#x27;soft&#x27; ? &#x27;soft&#x27; : &#x27;crisp&#x27;;
+      return;
+    }
+    if (value.demo !== &#x27;life-save-records-v2&#x27; || !Array.isArray(value.entries)
+      || value.entries.some(entry =&gt; !entry || typeof entry.id !== &#x27;string&#x27;
+        || typeof entry.at !== &#x27;string&#x27; || !Number.isFinite(Date.parse(entry.at)))
+      || new Set(value.entries.map(entry =&gt; entry.id)).size !== value.entries.length) {
+      incompatibleState = true;
+      storageError = &#x27;现有记录格式无法读取，已保留原数据，暂停写入。&#x27;;
+      return;
+    }
+    state.entries = value.entries.map(({ id, at }) =&gt; ({ id, at }));
+    incompatibleState = false;
+    storageError = &#x27;&#x27;;
     settings.sound = value.sound === true;
     settings.strength = value.strength === &#x27;soft&#x27; ? &#x27;soft&#x27; : &#x27;crisp&#x27;;
   }
-  function save() {
-    if (window.openai &amp;&amp; typeof window.openai.setWidgetState === &#x27;function&#x27;) {
-      window.openai.setWidgetState({ modelContent: { demo: &#x27;生活存档即时反馈&#x27;, feedback: settings.strength, sound: settings.sound }, privateContent: { demo: &#x27;life-save-tactile-v1&#x27;, ...state, ...settings } }).catch(() =&gt; {});
+  async function persistEntries(entries) {
+    if (!window.openai || typeof window.openai.setWidgetState !== &#x27;function&#x27;) {
+      throw new Error(&#x27;Storage unavailable&#x27;);
     }
+    // Wait for the standalone page&#x27;s local-storage receipt before showing success.
+    await window.openai.setWidgetState({
+      modelContent: { demo: &#x27;生活记录原型&#x27;, feedback: settings.strength, sound: settings.sound },
+      privateContent: { demo: &#x27;life-save-records-v2&#x27;, entries, ...settings },
+    });
+  }
+  function formatTime(at) {
+    return new Intl.DateTimeFormat(&#x27;zh-CN&#x27;, {
+      year: &#x27;numeric&#x27;, month: &#x27;2-digit&#x27;, day: &#x27;2-digit&#x27;,
+      hour: &#x27;2-digit&#x27;, minute: &#x27;2-digit&#x27;, second: &#x27;2-digit&#x27;, hourCycle: &#x27;h23&#x27;,
+    }).format(new Date(at));
+  }
+  function refreshElapsed() {
+    const latest = state.entries[0];
+    if (!latest) {
+      part(&#x27;elapsed&#x27;).textContent = &#x27;还没有记录&#x27;;
+      part(&#x27;stamp&#x27;).textContent = &#x27;记录后，这里会显示上次时间。&#x27;;
+      return;
+    }
+    const minutes = Math.floor(Math.max(0, Date.now() - Date.parse(latest.at)) / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    part(&#x27;elapsed&#x27;).textContent = minutes &lt; 1 ? &#x27;刚刚&#x27;
+      : minutes &lt; 60 ? minutes + &#x27; 分钟&#x27;
+      : hours &lt; 24 ? hours + &#x27; 小时 &#x27; + (minutes % 60) + &#x27; 分钟&#x27;
+      : days + &#x27; 天 &#x27; + (hours % 24) + &#x27; 小时&#x27;;
+    part(&#x27;stamp&#x27;).textContent = formatTime(latest.at);
   }
   function render() {
     root.dataset.strength = settings.strength;
-    part(&#x27;elapsed&#x27;).textContent = state.recorded ? &#x27;刚刚&#x27; : &#x27;1 天 6 小时&#x27;;
-    part(&#x27;stamp&#x27;).textContent = state.recorded ? &#x27;10 月 22 日 · 20:00（示例）&#x27; : &#x27;10 月 21 日 · 14:00&#x27;;
-    part(&#x27;record-label&#x27;).textContent = state.recorded ? &#x27;这次记好了&#x27; : &#x27;我已服药，记一下&#x27;;
-    part(&#x27;plus&#x27;).hidden = state.recorded;
-    part(&#x27;check&#x27;).hidden = !state.recorded;
-    record.disabled = state.recorded;
-    action(&#x27;undo&#x27;).hidden = !state.recorded;
-    action(&#x27;replay&#x27;).hidden = !state.recorded;
-    part(&#x27;status-idle&#x27;).hidden = state.recorded;
-    part(&#x27;status-done&#x27;).hidden = !state.recorded;
-    part(&#x27;status-title&#x27;).textContent = state.recorded ? &#x27;好了，已经替你记住。&#x27; : &#x27;点一下，这件事就记住了&#x27;;
-    part(&#x27;status-desc&#x27;).textContent = state.recorded ? &#x27;新增 1 条记录 · 刚刚&#x27; : &#x27;下次想知道，打开就能看见。&#x27;;
+    const hasEntries = state.entries.length &gt; 0;
+    const cooling = Date.now() &lt; readyAt;
+    refreshElapsed();
+    part(&#x27;record-label&#x27;).textContent = writing ? &#x27;正在保存…&#x27; : cooling ? &#x27;这次记好了&#x27; : hasEntries ? &#x27;再记一次&#x27; : &#x27;我已服药，记一下&#x27;;
+    part(&#x27;plus&#x27;).hidden = cooling;
+    part(&#x27;check&#x27;).hidden = !cooling;
+    record.disabled = writing || cooling || incompatibleState;
+    action(&#x27;undo&#x27;).hidden = !hasEntries;
+    action(&#x27;undo&#x27;).disabled = writing || incompatibleState;
+    part(&#x27;status-idle&#x27;).hidden = hasEntries;
+    part(&#x27;status-done&#x27;).hidden = !hasEntries;
+    part(&#x27;status-title&#x27;).textContent = message || (hasEntries ? &#x27;上次的事，已经记住了。&#x27; : &#x27;点一下，这件事就记住了&#x27;);
+    part(&#x27;status-desc&#x27;).textContent = hasEntries ? &#x27;本机共 &#x27; + state.entries.length + &#x27; 条记录&#x27; : &#x27;下次想知道，打开就能看见。&#x27;;
+    part(&#x27;error&#x27;).hidden = !storageError;
+    part(&#x27;error&#x27;).textContent = storageError;
     part(&#x27;sound-label&#x27;).textContent = audioUnavailable ? &#x27;音效不可用&#x27; : settings.sound ? &#x27;音效 开&#x27; : &#x27;音效 关&#x27;;
     sound.setAttribute(&#x27;aria-pressed&#x27;, String(settings.sound));
     sound.setAttribute(&#x27;aria-label&#x27;, audioUnavailable ? &#x27;音效不可用，点击重试&#x27; : settings.sound ? &#x27;关闭音效&#x27; : &#x27;开启音效&#x27;);
     history.setAttribute(&#x27;aria-expanded&#x27;, String(state.historyOpen));
+    history.textContent = &#x27;查看记录（&#x27; + state.entries.length + &#x27;）&#x27;;
     list.hidden = !state.historyOpen;
     list.replaceChildren();
-    const stamps = state.recorded ? [&#x27;10 月 22 日 · 20:00&#x27;, &#x27;10 月 21 日 · 14:00&#x27;, &#x27;10 月 19 日 · 13:30&#x27;] : [&#x27;10 月 21 日 · 14:00&#x27;, &#x27;10 月 19 日 · 13:30&#x27;];
-    stamps.forEach((stamp) =&gt; {
+    state.entries.forEach((entry) =&gt; {
       const item = document.createElement(&#x27;li&#x27;);
       const date = document.createElement(&#x27;span&#x27;);
       const label = document.createElement(&#x27;span&#x27;);
-      date.textContent = stamp;
+      date.textContent = formatTime(entry.at);
       label.textContent = &#x27;服药记录&#x27;;
       item.append(date, label);
       list.append(item);
@@ -1958,7 +2011,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         osc.stop(now + delay + duration + .01);
         osc.onended = () =&gt; { osc.disconnect(); gain.disconnect(); };
       });
-    } catch (_) { audioUnavailable = true; settings.sound = false; render(); save(); }
+    } catch (_) { audioUnavailable = true; settings.sound = false; render(); }
     finally { playingAudio = false; }
   }
   function feedback() {
@@ -1967,25 +2020,66 @@ html&gt;body{padding:0}&lt;/style&gt;
     root.classList.add(&#x27;is-playing&#x27;);
     void playSound();
   }
-  record.addEventListener(&#x27;click&#x27;, () =&gt; {
-    if (state.recorded) return;
-    state.recorded = true;
+  record.addEventListener(&#x27;click&#x27;, async () =&gt; {
+    if (writing || Date.now() &lt; readyAt || incompatibleState) return;
+    const entry = { id: crypto.randomUUID(), at: new Date().toISOString() };
+    const next = [entry, ...state.entries];
+    writing = true;
+    storageError = &#x27;&#x27;;
+    message = &#x27;&#x27;;
     render();
-    feedback();
-    save();
+    try {
+      await persistEntries(next);
+      state.entries = next;
+      message = &#x27;这次也记住了。&#x27;;
+      readyAt = Date.now() + cooldownMs;
+      render();
+      feedback();
+      clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() =&gt; {
+        readyAt = 0;
+        root.classList.remove(&#x27;is-playing&#x27;);
+        render();
+      }, cooldownMs);
+    } catch (_) {
+      storageError = &#x27;保存失败，本次没有新增记录。请检查浏览器存储后重试。&#x27;;
+    } finally {
+      writing = false;
+      render();
+    }
   });
-  action(&#x27;undo&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { root.classList.remove(&#x27;is-playing&#x27;); state.recorded = false; render(); save(); });
-  action(&#x27;replay&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { if (state.recorded) feedback(); });
-  history.addEventListener(&#x27;click&#x27;, () =&gt; { state.historyOpen = !state.historyOpen; render(); save(); });
-  sound.addEventListener(&#x27;click&#x27;, () =&gt; { audioUnavailable = false; settings.sound = !settings.sound; render(); save(); });
+  action(&#x27;undo&#x27;).addEventListener(&#x27;click&#x27;, async () =&gt; {
+    if (writing || !state.entries.length || incompatibleState) return;
+    clearTimeout(feedbackTimer);
+    root.classList.remove(&#x27;is-playing&#x27;);
+    readyAt = 0;
+    writing = true;
+    storageError = &#x27;&#x27;;
+    const next = state.entries.slice(1);
+    render();
+    try {
+      await persistEntries(next);
+      state.entries = next;
+      message = next.length ? &#x27;已撤销最近一次，之前的记录还在。&#x27; : &#x27;已撤销最近一次。&#x27;;
+    } catch (_) {
+      storageError = &#x27;撤销未保存，原记录已保留，请重试。&#x27;;
+    } finally {
+      writing = false;
+      render();
+    }
+  });
+  history.addEventListener(&#x27;click&#x27;, () =&gt; { state.historyOpen = !state.historyOpen; render(); });
+  sound.addEventListener(&#x27;click&#x27;, () =&gt; { audioUnavailable = false; settings.sound = !settings.sound; render(); });
   applySaved(window.openai &amp;&amp; window.openai.widgetState);
   render();
   window.addEventListener(&#x27;openai:set_globals&#x27;, (event) =&gt; {
     const globals = event.detail &amp;&amp; event.detail.globals;
-    if (globals &amp;&amp; Object.prototype.hasOwnProperty.call(globals, &#x27;widgetState&#x27;)) { applySaved(globals.widgetState); render(); }
+    if (!writing &amp;&amp; globals &amp;&amp; Object.prototype.hasOwnProperty.call(globals, &#x27;widgetState&#x27;)) { applySaved(globals.widgetState); render(); }
   });
+  setInterval(refreshElapsed, 30000);
+  document.addEventListener(&#x27;visibilitychange&#x27;, () =&gt; { if (!document.hidden) render(); });
   if (globalThis.Tweak) {
-    const tweak = new Tweak({ container: root.querySelector(&#x27;.st-app&#x27;), onChange: () =&gt; { render(); save(); } });
+    const tweak = new Tweak({ container: root.querySelector(&#x27;.st-app&#x27;), onChange: render });
     tweak.addSelect(settings, &#x27;strength&#x27;, { label: &#x27;反馈力度&#x27;, options: [{ label: &#x27;清脆弹跳&#x27;, value: &#x27;crisp&#x27; }, { label: &#x27;轻快收敛&#x27;, value: &#x27;soft&#x27; }] });
   }
 })();
