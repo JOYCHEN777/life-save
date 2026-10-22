@@ -1,0 +1,204 @@
+<style>
+  #life-save-tactile { padding: 24px 12px; }
+  #life-save-tactile .st-app { --st-bg: light-dark(#f0f2ed,#1e2520); --st-panel: light-dark(#ffffff,#2a342d); --st-ink: light-dark(#1e3428,#f1f6eb); --st-muted: light-dark(#657369,#b1c3b4); --st-button: light-dark(#c8f078,#bde66d); --st-button-ink: light-dark(#203810,#203810); --st-base: light-dark(#86ae43,#71913b); --st-soft: light-dark(#e8f4d8,#3b5031); --st-particle: light-dark(#699835,#c8f078); --st-particle-alt: light-dark(#ecae50,#eabe6b); max-width: 390px; margin: auto; padding: 24px; border-radius: 30px; color: var(--st-ink); background: var(--st-bg); font: 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  #life-save-tactile .st-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  #life-save-tactile .st-brand { font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
+  #life-save-tactile .st-sub { color: var(--st-muted); font-size: 12px; margin-top: 3px; }
+  #life-save-tactile button { font: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  #life-save-tactile button:focus-visible { outline: 3px solid var(--st-particle); outline-offset: 4px; }
+  #life-save-tactile [hidden] { display: none !important; }
+  #life-save-tactile .st-sound { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 0 8px 8px; background: transparent; color: var(--st-muted); border: 0; font-size: 12px; white-space: nowrap; }
+  #life-save-tactile .st-sound svg { width: 16px; height: 16px; }
+  #life-save-tactile .st-card { background: var(--st-panel); border-radius: 24px; padding: 24px; position: relative; isolation: isolate; }
+  #life-save-tactile .st-category { display: flex; align-items: center; gap: 9px; margin-bottom: 25px; font-weight: 600; }
+  #life-save-tactile .st-category svg { width: 20px; height: 20px; }
+  #life-save-tactile .st-label { color: var(--st-muted); font-size: 13px; }
+  #life-save-tactile .st-time { font-size: clamp(30px,7vw,40px); line-height: 1.3; font-weight: 750; letter-spacing: -1px; margin: 8px 0; font-variant-numeric: tabular-nums; transform-origin: left center; }
+  #life-save-tactile .st-stamp { color: var(--st-muted); font-size: 12px; min-height: 20px; }
+  #life-save-tactile .st-button-wrap { position: relative; margin-top: 30px; padding-bottom: 8px; }
+  #life-save-tactile .st-record { display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; width: 100%; min-height: 62px; padding: 14px 12px; border: 0; border-radius: 18px; background: var(--st-button); color: var(--st-button-ink); box-shadow: 0 7px 0 var(--st-base); font-weight: 700; font-size: 16px; transition: transform 75ms ease-out, box-shadow 75ms ease-out; }
+  #life-save-tactile .st-record:active:not(:disabled) { transform: translateY(6px) scale(.985); box-shadow: 0 1px 0 var(--st-base); }
+  #life-save-tactile .st-record:disabled { background: var(--st-soft); color: var(--st-ink); box-shadow: 0 3px 0 var(--st-bg); transform: translateY(3px); }
+  #life-save-tactile .st-record svg { width: 21px; height: 21px; }
+  #life-save-tactile .st-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 2; }
+  #life-save-tactile .st-bit { position: absolute; width: 7px; height: 7px; margin: -3px; border-radius: 3px; background: var(--st-particle); opacity: 0; }
+  #life-save-tactile .st-bit:nth-child(even) { background: var(--st-particle-alt); border-radius: 50%; }
+  #life-save-tactile .st-done-bubble { position: absolute; left: 50%; bottom: 68px; transform: translateX(-50%); white-space: nowrap; padding: 8px 16px; background: var(--st-ink); color: var(--st-panel); font-size: 16px; font-weight: 700; border-radius: 14px; opacity: 0; pointer-events: none; z-index: 3; }
+  #life-save-tactile .st-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; margin-top: 7px; }
+  #life-save-tactile .st-link { padding: 10px 2px; min-height: 44px; border: 0; background: transparent; color: var(--st-muted); font-size: 12px; }
+  #life-save-tactile .st-status { display: flex; align-items: center; gap: 12px; min-height: 80px; margin: 14px 2px 0; }
+  #life-save-tactile .st-status-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 15px; flex-shrink: 0; background: var(--st-soft); color: var(--st-ink); }
+  #life-save-tactile .st-status-icon svg { width: 23px; height: 23px; }
+  #life-save-tactile .st-status-title { font-size: 14px; font-weight: 650; }
+  #life-save-tactile .st-status-desc { color: var(--st-muted); font-size: 12px; margin-top: 3px; }
+  #life-save-tactile .st-history { margin: 0; padding: 12px 0 0; list-style: none; }
+  #life-save-tactile .st-history li { padding: 8px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
+  #life-save-tactile .st-preview { margin-top: 6px; text-align: center; color: var(--st-muted); font-size: 11px; }
+  #life-save-tactile .st-replay { padding: 6px 8px; min-height: 44px; margin-bottom: 3px; border: 0; background: transparent; color: var(--st-ink); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+  #life-save-tactile.is-playing .st-time { animation: st-number 430ms cubic-bezier(.2,.8,.3,1); }
+  #life-save-tactile.is-playing .st-status-icon { animation: st-check 500ms cubic-bezier(.2,.8,.3,1); }
+  #life-save-tactile.is-playing .st-record { animation: st-release 330ms cubic-bezier(.18,.8,.3,1); }
+  #life-save-tactile.is-playing .st-bit { animation: st-particle 570ms ease-out both; }
+  #life-save-tactile.is-playing .st-done-bubble { animation: st-bubble 740ms ease-out both; }
+  #life-save-tactile[data-strength="soft"].is-playing .st-bit { animation: none; }
+  @keyframes st-number { 0% { transform: translateY(8px) scale(.88); opacity: .5; } 60% { transform: translateY(-2px) scale(1.04); opacity: 1; } 100% { transform: translateY(0) scale(1); } }
+  @keyframes st-check { 0% { transform: scale(.55) rotate(-15deg); } 55% { transform: scale(1.2) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+  @keyframes st-release { 0% { transform: translateY(6px) scale(.98); } 60% { transform: translateY(-3px) scale(1.015); } 100% { transform: translateY(3px) scale(1); } }
+  @keyframes st-particle { 0% { transform: translate(0,0) scale(.3); opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { transform: translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4); opacity: 0; } }
+  @keyframes st-bubble { 0% { transform: translate(-50%,16px) scale(.7); opacity: 0; } 25% { transform: translate(-50%,-4px) scale(1.08); opacity: 1; } 60% { transform: translate(-50%,-4px) scale(1); opacity: 1; } 100% { transform: translate(-50%,-16px) scale(.96); opacity: 0; } }
+  @media (max-width: 380px) { #life-save-tactile { padding: 20px 0; } #life-save-tactile .st-app { padding: 18px; } #life-save-tactile .st-card { padding: 20px; } }
+  @media (prefers-reduced-motion: reduce) { #life-save-tactile *, #life-save-tactile *::before, #life-save-tactile *::after { animation: none !important; transition: none !important; } }
+</style>
+<div id="life-save-tactile" class="viz-dotted-background" data-strength="crisp">
+  <section class="st-app" aria-label="随手存档即时反馈体验">
+    <header class="st-header">
+      <div><div class="st-brand">随手存档</div><div class="st-sub">交互示意 · 示例数据</div></div>
+      <button class="st-sound cursor-interaction" type="button" data-action="sound" aria-pressed="false" aria-label="开启音效"><i data-lucide="volume-2" aria-hidden="true"></i><span data-part="sound-label">音效 关</span></button>
+    </header>
+    <section class="st-card" aria-label="过敏药记录卡">
+      <div class="st-category"><i data-lucide="pill" aria-hidden="true"></i>过敏药</div>
+      <div aria-live="polite" aria-atomic="true">
+        <div class="st-label">距上次服药记录</div>
+        <div class="st-time" data-part="elapsed">1 天 6 小时</div>
+        <div class="st-stamp" data-part="stamp">10 月 21 日 · 14:00</div>
+      </div>
+      <div class="st-button-wrap">
+        <button class="st-record cursor-interaction" type="button" data-action="record"><span data-part="plus" aria-hidden="true"><i data-lucide="plus"></i></span><span data-part="check" aria-hidden="true" hidden><i data-lucide="check"></i></span><span data-part="record-label">我已服药，记一下</span></button>
+        <span class="st-done-bubble" aria-hidden="true">记住啦！</span>
+        <div class="st-burst" aria-hidden="true"></div>
+      </div>
+      <div class="st-actions"><button type="button" class="st-link cursor-interaction" data-action="history" aria-controls="st-history-list" aria-expanded="false">查看记录</button><button type="button" class="st-link cursor-interaction" data-action="undo" hidden>撤销本次</button></div>
+      <ul class="st-history" id="st-history-list" hidden></ul>
+    </section>
+    <div class="st-status" aria-live="polite" aria-atomic="true">
+      <div class="st-status-icon" aria-hidden="true"><span data-part="status-idle"><i data-lucide="bookmark"></i></span><span data-part="status-done" hidden><i data-lucide="check-check"></i></span></div>
+      <div><div class="st-status-title" data-part="status-title">点一下，这件事就记住了</div><div class="st-status-desc" data-part="status-desc">下次想知道，打开就能看见。</div></div>
+    </div>
+    <div class="st-preview"><button type="button" class="st-replay cursor-interaction" data-action="replay" hidden>再体验一次 · 不新增记录</button><div>仅演示交互，不保存真实用药记录</div></div>
+  </section>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('life-save-tactile');
+  const part = (name) => root.querySelector('[data-part="' + name + '"]');
+  const action = (name) => root.querySelector('[data-action="' + name + '"]');
+  const record = action('record');
+  const history = action('history');
+  const sound = action('sound');
+  const list = root.querySelector('#st-history-list');
+  const burst = root.querySelector('.st-burst');
+  const settings = { strength: 'crisp', sound: false };
+  const state = { recorded: false, historyOpen: false };
+  let audioContext;
+  let audioUnavailable = false;
+  let playingAudio = false;
+  const particles = [[-99,-47],[-73,-79],[-41,-91],[0,-101],[44,-90],[77,-72],[99,-41],[-94,17],[91,21],[-54,33],[55,35],[0,-66]];
+  particles.forEach(([x,y], i) => {
+    const dot = document.createElement('span');
+    dot.className = 'st-bit';
+    dot.style.setProperty('--dx', x + 'px');
+    dot.style.setProperty('--dy', y + 'px');
+    dot.style.setProperty('--dr', (i % 2 ? 100 : -70) + 'deg');
+    burst.append(dot);
+  });
+  function applySaved(saved) {
+    const value = saved && saved.privateContent;
+    if (!value || value.demo !== 'life-save-tactile-v1') return;
+    state.recorded = value.recorded === true;
+    state.historyOpen = value.historyOpen === true;
+    settings.sound = value.sound === true;
+    settings.strength = value.strength === 'soft' ? 'soft' : 'crisp';
+  }
+  function save() {
+    if (window.openai && typeof window.openai.setWidgetState === 'function') {
+      window.openai.setWidgetState({ modelContent: { demo: '生活存档即时反馈', feedback: settings.strength, sound: settings.sound }, privateContent: { demo: 'life-save-tactile-v1', ...state, ...settings } }).catch(() => {});
+    }
+  }
+  function render() {
+    root.dataset.strength = settings.strength;
+    part('elapsed').textContent = state.recorded ? '刚刚' : '1 天 6 小时';
+    part('stamp').textContent = state.recorded ? '10 月 22 日 · 20:00（示例）' : '10 月 21 日 · 14:00';
+    part('record-label').textContent = state.recorded ? '这次记好了' : '我已服药，记一下';
+    part('plus').hidden = state.recorded;
+    part('check').hidden = !state.recorded;
+    record.disabled = state.recorded;
+    action('undo').hidden = !state.recorded;
+    action('replay').hidden = !state.recorded;
+    part('status-idle').hidden = state.recorded;
+    part('status-done').hidden = !state.recorded;
+    part('status-title').textContent = state.recorded ? '好了，已经替你记住。' : '点一下，这件事就记住了';
+    part('status-desc').textContent = state.recorded ? '新增 1 条记录 · 刚刚' : '下次想知道，打开就能看见。';
+    part('sound-label').textContent = audioUnavailable ? '音效不可用' : settings.sound ? '音效 开' : '音效 关';
+    sound.setAttribute('aria-pressed', String(settings.sound));
+    sound.setAttribute('aria-label', audioUnavailable ? '音效不可用，点击重试' : settings.sound ? '关闭音效' : '开启音效');
+    history.setAttribute('aria-expanded', String(state.historyOpen));
+    list.hidden = !state.historyOpen;
+    list.replaceChildren();
+    const stamps = state.recorded ? ['10 月 22 日 · 20:00', '10 月 21 日 · 14:00', '10 月 19 日 · 13:30'] : ['10 月 21 日 · 14:00', '10 月 19 日 · 13:30'];
+    stamps.forEach((stamp) => {
+      const item = document.createElement('li');
+      const date = document.createElement('span');
+      const label = document.createElement('span');
+      date.textContent = stamp;
+      label.textContent = '服药记录';
+      item.append(date, label);
+      list.append(item);
+    });
+  }
+  async function playSound() {
+    if (!settings.sound || playingAudio) return;
+    playingAudio = true;
+    try {
+      const Audio = window.AudioContext || window.webkitAudioContext;
+      if (!Audio) throw new Error('Audio unavailable');
+      if (!audioContext || audioContext.state === 'closed') audioContext = new Audio();
+      if (audioContext.state === 'suspended') await audioContext.resume();
+      if (!settings.sound) return;
+      if (audioContext.state !== 'running') throw new Error('Audio unavailable');
+      const now = audioContext.currentTime;
+      [[740,0,.07],[1110,.045,.12]].forEach(([hz,delay,duration]) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(hz, now + delay);
+        gain.gain.setValueAtTime(0, now + delay);
+        gain.gain.linearRampToValueAtTime(.055, now + delay + .006);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + delay + duration);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now + delay);
+        osc.stop(now + delay + duration + .01);
+        osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+      });
+    } catch (_) { audioUnavailable = true; settings.sound = false; render(); save(); }
+    finally { playingAudio = false; }
+  }
+  function feedback() {
+    root.classList.remove('is-playing');
+    void root.offsetWidth;
+    root.classList.add('is-playing');
+    void playSound();
+  }
+  record.addEventListener('click', () => {
+    if (state.recorded) return;
+    state.recorded = true;
+    render();
+    feedback();
+    save();
+  });
+  action('undo').addEventListener('click', () => { root.classList.remove('is-playing'); state.recorded = false; render(); save(); });
+  action('replay').addEventListener('click', () => { if (state.recorded) feedback(); });
+  history.addEventListener('click', () => { state.historyOpen = !state.historyOpen; render(); save(); });
+  sound.addEventListener('click', () => { audioUnavailable = false; settings.sound = !settings.sound; render(); save(); });
+  applySaved(window.openai && window.openai.widgetState);
+  render();
+  window.addEventListener('openai:set_globals', (event) => {
+    const globals = event.detail && event.detail.globals;
+    if (globals && Object.prototype.hasOwnProperty.call(globals, 'widgetState')) { applySaved(globals.widgetState); render(); }
+  });
+  if (globalThis.Tweak) {
+    const tweak = new Tweak({ container: root.querySelector('.st-app'), onChange: () => { render(); save(); } });
+    tweak.addSelect(settings, 'strength', { label: '反馈力度', options: [{ label: '清脆弹跳', value: 'crisp' }, { label: '轻快收敛', value: 'soft' }] });
+  }
+})();
+</script>
