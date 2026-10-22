@@ -1819,8 +1819,37 @@ html&gt;body{padding:0}&lt;/style&gt;
   #life-save-tactile .st-status-icon svg { width: 23px; height: 23px; }
   #life-save-tactile .st-status-title { font-size: 14px; font-weight: 650; }
   #life-save-tactile .st-status-desc { color: var(--st-muted); font-size: 12px; margin-top: 3px; }
-  #life-save-tactile .st-history { margin: 0; padding: 12px 0 0; list-style: none; }
-  #life-save-tactile .st-history li { padding: 8px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
+  #life-save-tactile .st-calendar-section { margin-top: 16px; --st-day-empty: light-dark(#e9eee7,#37443a); --st-day-filled: light-dark(#73aa42,#83bc50); --st-day-ring: light-dark(#355d2d,#c8f078); }
+  #life-save-tactile .st-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  #life-save-tactile .st-calendar-title { font-size: 13px; font-weight: 650; }
+  #life-save-tactile .st-calendar-summary { color: var(--st-muted); font-size: 11px; }
+  #life-save-tactile .st-calendar-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px -6px 0; }
+  #life-save-tactile .st-calendar-nav button { display: grid; place-items: center; width: 32px; min-height: 36px; border: 0; border-radius: 9px; background: transparent; color: var(--st-ink); }
+  #life-save-tactile .st-calendar-nav button:disabled { opacity: .3; }
+  #life-save-tactile .st-calendar-nav svg { width: 16px; height: 16px; }
+  #life-save-tactile .st-calendar-range { font-size: 11px; color: var(--st-muted); text-align: center; font-variant-numeric: tabular-nums; }
+  #life-save-tactile .st-calendar-scroll { overflow-x: auto; padding: 4px 3px 8px; scrollbar-width: thin; }
+  #life-save-tactile .st-calendar-chart { min-width: 220px; }
+  #life-save-tactile .st-months { display: grid; grid-template-columns: 18px repeat(12,minmax(0,1fr)); gap: 4px; margin-bottom: 6px; min-height: 16px; color: var(--st-muted); font-size: 10px; }
+  #life-save-tactile .st-months span { white-space: nowrap; }
+  #life-save-tactile .st-days { display: grid; grid-template-columns: 18px repeat(12,minmax(0,1fr)); grid-template-rows: repeat(7,minmax(0,1fr)); gap: 4px; }
+  #life-save-tactile .st-weekday { display: flex; align-items: center; font-size: 10px; color: var(--st-muted); }
+  #life-save-tactile .st-day { display: block; aspect-ratio: 1; min-width: 0; width: 100%; padding: 0; border: 0; border-radius: 4px; background: var(--st-day-empty); transition: background 180ms ease, transform 130ms ease; }
+  #life-save-tactile .st-day[data-count]:not([data-count=&quot;0&quot;]) { background: var(--st-day-filled); }
+  #life-save-tactile .st-day[aria-current=&quot;date&quot;] { box-shadow: inset 0 0 0 1px var(--st-day-ring); }
+  #life-save-tactile .st-day[aria-pressed=&quot;true&quot;] { outline: 2px solid var(--st-day-ring); outline-offset: 1px; }
+  #life-save-tactile .st-day:focus-visible { outline: 3px solid var(--st-day-ring); outline-offset: 1px; }
+  #life-save-tactile .st-day:hover { transform: scale(1.12); }
+  #life-save-tactile .st-day-future { aspect-ratio: 1; background: transparent; }
+  #life-save-tactile .st-calendar-legend { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 2px; color: var(--st-muted); font-size: 10px; }
+  #life-save-tactile .st-swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--st-day-empty); }
+  #life-save-tactile .st-swatch-filled { background: var(--st-day-filled); margin-left: 7px; }
+  #life-save-tactile .st-day-details { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--st-bg); }
+  #life-save-tactile .st-day-title { font-size: 12px; font-weight: 600; }
+  #life-save-tactile .st-history { margin: 0; padding: 4px 0 0; list-style: none; }
+  #life-save-tactile .st-history li { padding: 7px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
+  #life-save-tactile .st-history-empty { color: var(--st-muted); }
+  #life-save-tactile.is-playing .st-day[aria-current=&quot;date&quot;] { animation: st-day-light 650ms ease-out; }
   #life-save-tactile .st-preview { margin-top: 6px; text-align: center; color: var(--st-muted); font-size: 11px; }
   #life-save-tactile .st-error { color: light-dark(#a52c24,#ffada6); font-size: 13px; margin: 12px 0 0; }
   #life-save-tactile.is-playing .st-time { animation: st-number 430ms cubic-bezier(.2,.8,.3,1); }
@@ -1834,6 +1863,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   @keyframes st-release { 0% { transform: translateY(6px) scale(.98); } 60% { transform: translateY(-3px) scale(1.015); } 100% { transform: translateY(3px) scale(1); } }
   @keyframes st-particle { 0% { transform: translate(0,0) scale(.3); opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { transform: translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4); opacity: 0; } }
   @keyframes st-bubble { 0% { transform: translate(-50%,16px) scale(.7); opacity: 0; } 25% { transform: translate(-50%,-4px) scale(1.08); opacity: 1; } 60% { transform: translate(-50%,-4px) scale(1); opacity: 1; } 100% { transform: translate(-50%,-16px) scale(.96); opacity: 0; } }
+  @keyframes st-day-light { 0% { transform: scale(.7); } 55% { transform: scale(1.22); } 100% { transform: scale(1); } }
   @media (max-width: 380px) { #life-save-tactile { padding: 20px 0; } #life-save-tactile .st-app { padding: 18px; } #life-save-tactile .st-card { padding: 20px; } }
   @media (prefers-reduced-motion: reduce) { #life-save-tactile *, #life-save-tactile *::before, #life-save-tactile *::after { animation: none !important; transition: none !important; } }
 &lt;/style&gt;
@@ -1856,8 +1886,21 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;div class=&quot;st-burst&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
       &lt;/div&gt;
       &lt;p class=&quot;st-error&quot; data-part=&quot;error&quot; role=&quot;alert&quot; hidden&gt;&lt;/p&gt;
-      &lt;div class=&quot;st-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;history&quot; aria-controls=&quot;st-history-list&quot; aria-expanded=&quot;false&quot;&gt;查看记录（0）&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;undo&quot; hidden&gt;撤销最近一次&lt;/button&gt;&lt;/div&gt;
-      &lt;ul class=&quot;st-history&quot; id=&quot;st-history-list&quot; hidden&gt;&lt;/ul&gt;
+      &lt;div class=&quot;st-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;history&quot; aria-controls=&quot;st-history-list&quot; aria-pressed=&quot;false&quot;&gt;全部记录（0）&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;st-link cursor-interaction&quot; data-action=&quot;undo&quot; hidden&gt;撤销最近一次&lt;/button&gt;&lt;/div&gt;
+      &lt;section class=&quot;st-calendar-section&quot; aria-label=&quot;按天查看记录日历&quot;&gt;
+        &lt;div class=&quot;st-calendar-heading&quot;&gt;&lt;span class=&quot;st-calendar-title&quot;&gt;记录日历&lt;/span&gt;&lt;span class=&quot;st-calendar-summary&quot; data-part=&quot;calendar-summary&quot;&gt;近 12 周&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;st-calendar-nav&quot;&gt;
+          &lt;button type=&quot;button&quot; class=&quot;cursor-interaction&quot; data-action=&quot;previous-period&quot; aria-label=&quot;查看前12周&quot;&gt;&lt;i data-lucide=&quot;chevron-left&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+          &lt;span class=&quot;st-calendar-range&quot; data-part=&quot;calendar-range&quot;&gt;&lt;/span&gt;
+          &lt;button type=&quot;button&quot; class=&quot;cursor-interaction&quot; data-action=&quot;next-period&quot; aria-label=&quot;查看后12周&quot; disabled&gt;&lt;i data-lucide=&quot;chevron-right&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;st-calendar-scroll&quot;&gt;&lt;div class=&quot;st-calendar-chart&quot;&gt;
+          &lt;div class=&quot;st-months&quot; data-part=&quot;calendar-months&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;st-days&quot; data-part=&quot;calendar-days&quot; role=&quot;group&quot; aria-label=&quot;每天一个方格，按周排列&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;&lt;/div&gt;
+        &lt;div class=&quot;st-calendar-legend&quot; aria-label=&quot;灰色表示未记录，绿色表示有记录&quot;&gt;&lt;span class=&quot;st-swatch&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;未记录&lt;span class=&quot;st-swatch st-swatch-filled&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;有记录&lt;/div&gt;
+        &lt;div class=&quot;st-day-details&quot;&gt;&lt;div class=&quot;st-day-title&quot; data-part=&quot;day-title&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;&lt;ul class=&quot;st-history&quot; id=&quot;st-history-list&quot;&gt;&lt;/ul&gt;&lt;/div&gt;
+      &lt;/section&gt;
     &lt;/section&gt;
     &lt;div class=&quot;st-status&quot; aria-live=&quot;polite&quot; aria-atomic=&quot;true&quot;&gt;
       &lt;div class=&quot;st-status-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;span data-part=&quot;status-idle&quot;&gt;&lt;i data-lucide=&quot;bookmark&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span data-part=&quot;status-done&quot; hidden&gt;&lt;i data-lucide=&quot;check-check&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;
@@ -1878,6 +1921,9 @@ html&gt;body{padding:0}&lt;/style&gt;
   const burst = root.querySelector(&#x27;.st-burst&#x27;);
   const settings = { strength: &#x27;crisp&#x27;, sound: false };
   const state = { entries: [], historyOpen: false };
+  let calendarPage = 0;
+  let selectedDay = null;
+  let calendarSignature = &#x27;&#x27;;
   const cooldownMs = 800;
   let writing = false;
   let readyAt = 0;
@@ -1952,6 +1998,119 @@ html&gt;body{padding:0}&lt;/style&gt;
       : days + &#x27; 天 &#x27; + (hours % 24) + &#x27; 小时&#x27;;
     part(&#x27;stamp&#x27;).textContent = formatTime(latest.at);
   }
+  // Calendar calculations use local dates and calendar arithmetic, including DST.
+  function localDayKey(value) {
+    const date = value instanceof Date ? value : new Date(value);
+    return date.getFullYear() + &#x27;-&#x27; + String(date.getMonth() + 1).padStart(2, &#x27;0&#x27;) + &#x27;-&#x27; + String(date.getDate()).padStart(2, &#x27;0&#x27;);
+  }
+  function moveLocalDay(date, days) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days, 12);
+  }
+  function calendarModel(entries, now, page) {
+    const today = moveLocalDay(now, 0);
+    const weekStart = moveLocalDay(today, -today.getDay());
+    const start = moveLocalDay(weekStart, -77 - page * 84);
+    const end = moveLocalDay(start, 83);
+    const buckets = new Map();
+    for (const entry of entries) {
+      const key = localDayKey(entry.at);
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(entry);
+    }
+    const todayKey = localDayKey(today);
+    const days = Array.from({ length: 84 }, (_, offset) =&gt; {
+      const date = moveLocalDay(start, offset);
+      const key = localDayKey(date);
+      return { date, key, count: (buckets.get(key) || []).length, future: key &gt; todayKey };
+    });
+    return { start, end, todayKey, days, buckets, activeDays: days.filter(day =&gt; !day.future &amp;&amp; day.count &gt; 0).length };
+  }
+  // Calendar UI derives from the existing records; it never rewrites saved entries.
+  function renderHeatmap() {
+    const model = calendarModel(state.entries, new Date(), calendarPage);
+    const lastVisibleDay = calendarPage === 0 ? model.todayKey : localDayKey(model.end);
+    if (!selectedDay || selectedDay &lt; localDayKey(model.start) || selectedDay &gt; lastVisibleDay) selectedDay = lastVisibleDay;
+    part(&#x27;calendar-summary&#x27;).textContent = (calendarPage === 0 ? &#x27;近 12 周&#x27; : &#x27;12 周&#x27;) + &#x27; · &#x27; + model.activeDays + &#x27; 天有记录&#x27;;
+    const rangeDate = new Intl.DateTimeFormat(&#x27;zh-CN&#x27;, { year: &#x27;numeric&#x27;, month: &#x27;2-digit&#x27;, day: &#x27;2-digit&#x27; });
+    const rangeEnd = calendarPage === 0 ? new Date() : model.end;
+    part(&#x27;calendar-range&#x27;).textContent = rangeDate.format(model.start) + &#x27; — &#x27; + rangeDate.format(rangeEnd);
+    action(&#x27;next-period&#x27;).disabled = calendarPage === 0;
+    const days = part(&#x27;calendar-days&#x27;);
+    const signature = calendarPage + &#x27;|&#x27; + model.todayKey + &#x27;|&#x27; + selectedDay + &#x27;|&#x27; + model.days.map(day =&gt; day.count).join(&#x27;,&#x27;);
+    if (signature !== calendarSignature) {
+      const previousPage = calendarSignature.split(&#x27;|&#x27;)[0];
+      const focusedDay = days.querySelector(&#x27;button:focus&#x27;)?.dataset.day;
+      days.replaceChildren();
+      const months = part(&#x27;calendar-months&#x27;);
+      months.replaceChildren();
+      [&#x27;日&#x27;, &#x27;一&#x27;, &#x27;二&#x27;, &#x27;三&#x27;, &#x27;四&#x27;, &#x27;五&#x27;, &#x27;六&#x27;].forEach((label, row) =&gt; {
+        const mark = document.createElement(&#x27;span&#x27;);
+        mark.className = &#x27;st-weekday&#x27;;
+        mark.textContent = label;
+        mark.style.gridColumn = &#x27;1&#x27;;
+        mark.style.gridRow = String(row + 1);
+        mark.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        days.append(mark);
+      });
+      const longDate = new Intl.DateTimeFormat(&#x27;zh-CN&#x27;, { year: &#x27;numeric&#x27;, month: &#x27;long&#x27;, day: &#x27;numeric&#x27;, weekday: &#x27;long&#x27; });
+      model.days.forEach((day, offset) =&gt; {
+        const week = Math.floor(offset / 7);
+        const showMonth = week === 0
+          ? day.date.getMonth() === model.days[7].date.getMonth()
+          : day.date.getMonth() !== model.days[offset - 7].date.getMonth();
+        if (offset % 7 === 0 &amp;&amp; showMonth) {
+          const label = document.createElement(&#x27;span&#x27;);
+          label.textContent = (day.date.getMonth() + 1) + &#x27;月&#x27;;
+          label.style.gridColumn = (week + 2) + &#x27; / span &#x27; + Math.min(2, 12 - week);
+          months.append(label);
+        }
+        const cell = document.createElement(day.future ? &#x27;span&#x27; : &#x27;button&#x27;);
+        cell.className = day.future ? &#x27;st-day-future&#x27; : &#x27;st-day cursor-interaction&#x27;;
+        cell.style.gridColumn = String(week + 2);
+        cell.style.gridRow = String(offset % 7 + 1);
+        if (day.future) cell.setAttribute(&#x27;aria-hidden&#x27;, &#x27;true&#x27;);
+        else {
+          cell.type = &#x27;button&#x27;;
+          cell.dataset.day = day.key;
+          cell.dataset.count = String(day.count);
+          cell.setAttribute(&#x27;aria-label&#x27;, longDate.format(day.date) + &#x27;，&#x27; + day.count + &#x27; 条记录&#x27;);
+          cell.title = longDate.format(day.date) + &#x27; · &#x27; + day.count + &#x27; 条记录&#x27;;
+          cell.setAttribute(&#x27;aria-pressed&#x27;, String(day.key === selectedDay &amp;&amp; !state.historyOpen));
+          if (day.key === model.todayKey) cell.setAttribute(&#x27;aria-current&#x27;, &#x27;date&#x27;);
+        }
+        days.append(cell);
+      });
+      calendarSignature = signature;
+      if (focusedDay) days.querySelector(&#x27;[data-day=&quot;&#x27; + focusedDay + &#x27;&quot;]&#x27;)?.focus({ preventScroll: true });
+      if (previousPage !== String(calendarPage)) {
+        const viewport = root.querySelector(&#x27;.st-calendar-scroll&#x27;);
+        viewport.scrollLeft = viewport.scrollWidth;
+      }
+    }
+    // The all-records switch may change without changing dates or record counts.
+    days.querySelectorAll(&#x27;button[data-day]&#x27;).forEach(cell =&gt; cell.setAttribute(&#x27;aria-pressed&#x27;, String(cell.dataset.day === selectedDay &amp;&amp; !state.historyOpen)));
+    const selectedEntries = state.historyOpen ? state.entries : (model.buckets.get(selectedDay) || []);
+    const selectedDate = model.days.find(day =&gt; day.key === selectedDay).date;
+    const selectedLabel = new Intl.DateTimeFormat(&#x27;zh-CN&#x27;, { month: &#x27;long&#x27;, day: &#x27;numeric&#x27; }).format(selectedDate);
+    part(&#x27;day-title&#x27;).textContent = state.historyOpen ? &#x27;全部记录 · &#x27; + state.entries.length + &#x27; 条&#x27; : selectedLabel + (selectedDay === model.todayKey ? &#x27; · 今天&#x27; : &#x27;&#x27;) + &#x27; · &#x27; + selectedEntries.length + &#x27; 条记录&#x27;;
+    list.replaceChildren();
+    if (!selectedEntries.length) {
+      const empty = document.createElement(&#x27;li&#x27;);
+      empty.className = &#x27;st-history-empty&#x27;;
+      empty.textContent = state.historyOpen ? &#x27;还没有记录。&#x27; : &#x27;这一天没有记录。&#x27;;
+      list.append(empty);
+    }
+    selectedEntries.forEach(entry =&gt; {
+      const item = document.createElement(&#x27;li&#x27;);
+      const time = document.createElement(&#x27;time&#x27;);
+      time.dateTime = entry.at;
+      time.textContent = state.historyOpen ? formatTime(entry.at) : new Intl.DateTimeFormat(&#x27;zh-CN&#x27;, { hour: &#x27;2-digit&#x27;, minute: &#x27;2-digit&#x27;, second: &#x27;2-digit&#x27;, hourCycle: &#x27;h23&#x27; }).format(new Date(entry.at));
+      const label = document.createElement(&#x27;span&#x27;);
+      label.textContent = &#x27;服药记录&#x27;;
+      item.append(time, label);
+      list.append(item);
+    });
+  }
   function render() {
     root.dataset.strength = settings.strength;
     const hasEntries = state.entries.length &gt; 0;
@@ -1972,19 +2131,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     part(&#x27;sound-label&#x27;).textContent = audioUnavailable ? &#x27;音效不可用&#x27; : settings.sound ? &#x27;音效 开&#x27; : &#x27;音效 关&#x27;;
     sound.setAttribute(&#x27;aria-pressed&#x27;, String(settings.sound));
     sound.setAttribute(&#x27;aria-label&#x27;, audioUnavailable ? &#x27;音效不可用，点击重试&#x27; : settings.sound ? &#x27;关闭音效&#x27; : &#x27;开启音效&#x27;);
-    history.setAttribute(&#x27;aria-expanded&#x27;, String(state.historyOpen));
-    history.textContent = &#x27;查看记录（&#x27; + state.entries.length + &#x27;）&#x27;;
-    list.hidden = !state.historyOpen;
-    list.replaceChildren();
-    state.entries.forEach((entry) =&gt; {
-      const item = document.createElement(&#x27;li&#x27;);
-      const date = document.createElement(&#x27;span&#x27;);
-      const label = document.createElement(&#x27;span&#x27;);
-      date.textContent = formatTime(entry.at);
-      label.textContent = &#x27;服药记录&#x27;;
-      item.append(date, label);
-      list.append(item);
-    });
+    history.setAttribute(&#x27;aria-pressed&#x27;, String(state.historyOpen));
+    history.textContent = state.historyOpen ? &#x27;返回按天查看&#x27; : &#x27;全部记录（&#x27; + state.entries.length + &#x27;）&#x27;;
+    renderHeatmap();
   }
   async function playSound() {
     if (!settings.sound || playingAudio) return;
@@ -2031,6 +2180,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     try {
       await persistEntries(next);
       state.entries = next;
+      calendarPage = 0;
+      selectedDay = localDayKey(entry.at);
+      state.historyOpen = false;
       message = &#x27;这次也记住了。&#x27;;
       readyAt = Date.now() + cooldownMs;
       render();
@@ -2069,6 +2221,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
   });
   history.addEventListener(&#x27;click&#x27;, () =&gt; { state.historyOpen = !state.historyOpen; render(); });
+  part(&#x27;calendar-days&#x27;).addEventListener(&#x27;click&#x27;, event =&gt; {
+    const day = event.target.closest(&#x27;button[data-day]&#x27;);
+    if (!day) return;
+    selectedDay = day.dataset.day;
+    state.historyOpen = false;
+    render();
+  });
+  action(&#x27;previous-period&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { calendarPage += 1; selectedDay = null; state.historyOpen = false; render(); });
+  action(&#x27;next-period&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { calendarPage = Math.max(0, calendarPage - 1); selectedDay = null; state.historyOpen = false; render(); });
   sound.addEventListener(&#x27;click&#x27;, () =&gt; { audioUnavailable = false; settings.sound = !settings.sound; render(); });
   applySaved(window.openai &amp;&amp; window.openai.widgetState);
   render();
@@ -2076,7 +2237,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const globals = event.detail &amp;&amp; event.detail.globals;
     if (!writing &amp;&amp; globals &amp;&amp; Object.prototype.hasOwnProperty.call(globals, &#x27;widgetState&#x27;)) { applySaved(globals.widgetState); render(); }
   });
-  setInterval(refreshElapsed, 30000);
+  setInterval(() =&gt; { refreshElapsed(); renderHeatmap(); }, 30000);
   document.addEventListener(&#x27;visibilitychange&#x27;, () =&gt; { if (!document.hidden) render(); });
   if (globalThis.Tweak) {
     const tweak = new Tweak({ container: root.querySelector(&#x27;.st-app&#x27;), onChange: render });

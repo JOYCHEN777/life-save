@@ -31,8 +31,37 @@
   #life-save-tactile .st-status-icon svg { width: 23px; height: 23px; }
   #life-save-tactile .st-status-title { font-size: 14px; font-weight: 650; }
   #life-save-tactile .st-status-desc { color: var(--st-muted); font-size: 12px; margin-top: 3px; }
-  #life-save-tactile .st-history { margin: 0; padding: 12px 0 0; list-style: none; }
-  #life-save-tactile .st-history li { padding: 8px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
+  #life-save-tactile .st-calendar-section { margin-top: 16px; --st-day-empty: light-dark(#e9eee7,#37443a); --st-day-filled: light-dark(#73aa42,#83bc50); --st-day-ring: light-dark(#355d2d,#c8f078); }
+  #life-save-tactile .st-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  #life-save-tactile .st-calendar-title { font-size: 13px; font-weight: 650; }
+  #life-save-tactile .st-calendar-summary { color: var(--st-muted); font-size: 11px; }
+  #life-save-tactile .st-calendar-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px -6px 0; }
+  #life-save-tactile .st-calendar-nav button { display: grid; place-items: center; width: 32px; min-height: 36px; border: 0; border-radius: 9px; background: transparent; color: var(--st-ink); }
+  #life-save-tactile .st-calendar-nav button:disabled { opacity: .3; }
+  #life-save-tactile .st-calendar-nav svg { width: 16px; height: 16px; }
+  #life-save-tactile .st-calendar-range { font-size: 11px; color: var(--st-muted); text-align: center; font-variant-numeric: tabular-nums; }
+  #life-save-tactile .st-calendar-scroll { overflow-x: auto; padding: 4px 3px 8px; scrollbar-width: thin; }
+  #life-save-tactile .st-calendar-chart { min-width: 220px; }
+  #life-save-tactile .st-months { display: grid; grid-template-columns: 18px repeat(12,minmax(0,1fr)); gap: 4px; margin-bottom: 6px; min-height: 16px; color: var(--st-muted); font-size: 10px; }
+  #life-save-tactile .st-months span { white-space: nowrap; }
+  #life-save-tactile .st-days { display: grid; grid-template-columns: 18px repeat(12,minmax(0,1fr)); grid-template-rows: repeat(7,minmax(0,1fr)); gap: 4px; }
+  #life-save-tactile .st-weekday { display: flex; align-items: center; font-size: 10px; color: var(--st-muted); }
+  #life-save-tactile .st-day { display: block; aspect-ratio: 1; min-width: 0; width: 100%; padding: 0; border: 0; border-radius: 4px; background: var(--st-day-empty); transition: background 180ms ease, transform 130ms ease; }
+  #life-save-tactile .st-day[data-count]:not([data-count="0"]) { background: var(--st-day-filled); }
+  #life-save-tactile .st-day[aria-current="date"] { box-shadow: inset 0 0 0 1px var(--st-day-ring); }
+  #life-save-tactile .st-day[aria-pressed="true"] { outline: 2px solid var(--st-day-ring); outline-offset: 1px; }
+  #life-save-tactile .st-day:focus-visible { outline: 3px solid var(--st-day-ring); outline-offset: 1px; }
+  #life-save-tactile .st-day:hover { transform: scale(1.12); }
+  #life-save-tactile .st-day-future { aspect-ratio: 1; background: transparent; }
+  #life-save-tactile .st-calendar-legend { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 2px; color: var(--st-muted); font-size: 10px; }
+  #life-save-tactile .st-swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--st-day-empty); }
+  #life-save-tactile .st-swatch-filled { background: var(--st-day-filled); margin-left: 7px; }
+  #life-save-tactile .st-day-details { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--st-bg); }
+  #life-save-tactile .st-day-title { font-size: 12px; font-weight: 600; }
+  #life-save-tactile .st-history { margin: 0; padding: 4px 0 0; list-style: none; }
+  #life-save-tactile .st-history li { padding: 7px 0; display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; font-size: 12px; }
+  #life-save-tactile .st-history-empty { color: var(--st-muted); }
+  #life-save-tactile.is-playing .st-day[aria-current="date"] { animation: st-day-light 650ms ease-out; }
   #life-save-tactile .st-preview { margin-top: 6px; text-align: center; color: var(--st-muted); font-size: 11px; }
   #life-save-tactile .st-error { color: light-dark(#a52c24,#ffada6); font-size: 13px; margin: 12px 0 0; }
   #life-save-tactile.is-playing .st-time { animation: st-number 430ms cubic-bezier(.2,.8,.3,1); }
@@ -46,6 +75,7 @@
   @keyframes st-release { 0% { transform: translateY(6px) scale(.98); } 60% { transform: translateY(-3px) scale(1.015); } 100% { transform: translateY(3px) scale(1); } }
   @keyframes st-particle { 0% { transform: translate(0,0) scale(.3); opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { transform: translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4); opacity: 0; } }
   @keyframes st-bubble { 0% { transform: translate(-50%,16px) scale(.7); opacity: 0; } 25% { transform: translate(-50%,-4px) scale(1.08); opacity: 1; } 60% { transform: translate(-50%,-4px) scale(1); opacity: 1; } 100% { transform: translate(-50%,-16px) scale(.96); opacity: 0; } }
+  @keyframes st-day-light { 0% { transform: scale(.7); } 55% { transform: scale(1.22); } 100% { transform: scale(1); } }
   @media (max-width: 380px) { #life-save-tactile { padding: 20px 0; } #life-save-tactile .st-app { padding: 18px; } #life-save-tactile .st-card { padding: 20px; } }
   @media (prefers-reduced-motion: reduce) { #life-save-tactile *, #life-save-tactile *::before, #life-save-tactile *::after { animation: none !important; transition: none !important; } }
 </style>
@@ -68,8 +98,21 @@
         <div class="st-burst" aria-hidden="true"></div>
       </div>
       <p class="st-error" data-part="error" role="alert" hidden></p>
-      <div class="st-actions"><button type="button" class="st-link cursor-interaction" data-action="history" aria-controls="st-history-list" aria-expanded="false">查看记录（0）</button><button type="button" class="st-link cursor-interaction" data-action="undo" hidden>撤销最近一次</button></div>
-      <ul class="st-history" id="st-history-list" hidden></ul>
+      <div class="st-actions"><button type="button" class="st-link cursor-interaction" data-action="history" aria-controls="st-history-list" aria-pressed="false">全部记录（0）</button><button type="button" class="st-link cursor-interaction" data-action="undo" hidden>撤销最近一次</button></div>
+      <section class="st-calendar-section" aria-label="按天查看记录日历">
+        <div class="st-calendar-heading"><span class="st-calendar-title">记录日历</span><span class="st-calendar-summary" data-part="calendar-summary">近 12 周</span></div>
+        <div class="st-calendar-nav">
+          <button type="button" class="cursor-interaction" data-action="previous-period" aria-label="查看前12周"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+          <span class="st-calendar-range" data-part="calendar-range"></span>
+          <button type="button" class="cursor-interaction" data-action="next-period" aria-label="查看后12周" disabled><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="st-calendar-scroll"><div class="st-calendar-chart">
+          <div class="st-months" data-part="calendar-months" aria-hidden="true"></div>
+          <div class="st-days" data-part="calendar-days" role="group" aria-label="每天一个方格，按周排列"></div>
+        </div></div>
+        <div class="st-calendar-legend" aria-label="灰色表示未记录，绿色表示有记录"><span class="st-swatch" aria-hidden="true"></span>未记录<span class="st-swatch st-swatch-filled" aria-hidden="true"></span>有记录</div>
+        <div class="st-day-details"><div class="st-day-title" data-part="day-title" aria-live="polite"></div><ul class="st-history" id="st-history-list"></ul></div>
+      </section>
     </section>
     <div class="st-status" aria-live="polite" aria-atomic="true">
       <div class="st-status-icon" aria-hidden="true"><span data-part="status-idle"><i data-lucide="bookmark"></i></span><span data-part="status-done" hidden><i data-lucide="check-check"></i></span></div>
@@ -90,6 +133,9 @@
   const burst = root.querySelector('.st-burst');
   const settings = { strength: 'crisp', sound: false };
   const state = { entries: [], historyOpen: false };
+  let calendarPage = 0;
+  let selectedDay = null;
+  let calendarSignature = '';
   const cooldownMs = 800;
   let writing = false;
   let readyAt = 0;
@@ -164,6 +210,119 @@
       : days + ' 天 ' + (hours % 24) + ' 小时';
     part('stamp').textContent = formatTime(latest.at);
   }
+  // Calendar calculations use local dates and calendar arithmetic, including DST.
+  function localDayKey(value) {
+    const date = value instanceof Date ? value : new Date(value);
+    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  }
+  function moveLocalDay(date, days) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days, 12);
+  }
+  function calendarModel(entries, now, page) {
+    const today = moveLocalDay(now, 0);
+    const weekStart = moveLocalDay(today, -today.getDay());
+    const start = moveLocalDay(weekStart, -77 - page * 84);
+    const end = moveLocalDay(start, 83);
+    const buckets = new Map();
+    for (const entry of entries) {
+      const key = localDayKey(entry.at);
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(entry);
+    }
+    const todayKey = localDayKey(today);
+    const days = Array.from({ length: 84 }, (_, offset) => {
+      const date = moveLocalDay(start, offset);
+      const key = localDayKey(date);
+      return { date, key, count: (buckets.get(key) || []).length, future: key > todayKey };
+    });
+    return { start, end, todayKey, days, buckets, activeDays: days.filter(day => !day.future && day.count > 0).length };
+  }
+  // Calendar UI derives from the existing records; it never rewrites saved entries.
+  function renderHeatmap() {
+    const model = calendarModel(state.entries, new Date(), calendarPage);
+    const lastVisibleDay = calendarPage === 0 ? model.todayKey : localDayKey(model.end);
+    if (!selectedDay || selectedDay < localDayKey(model.start) || selectedDay > lastVisibleDay) selectedDay = lastVisibleDay;
+    part('calendar-summary').textContent = (calendarPage === 0 ? '近 12 周' : '12 周') + ' · ' + model.activeDays + ' 天有记录';
+    const rangeDate = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const rangeEnd = calendarPage === 0 ? new Date() : model.end;
+    part('calendar-range').textContent = rangeDate.format(model.start) + ' — ' + rangeDate.format(rangeEnd);
+    action('next-period').disabled = calendarPage === 0;
+    const days = part('calendar-days');
+    const signature = calendarPage + '|' + model.todayKey + '|' + selectedDay + '|' + model.days.map(day => day.count).join(',');
+    if (signature !== calendarSignature) {
+      const previousPage = calendarSignature.split('|')[0];
+      const focusedDay = days.querySelector('button:focus')?.dataset.day;
+      days.replaceChildren();
+      const months = part('calendar-months');
+      months.replaceChildren();
+      ['日', '一', '二', '三', '四', '五', '六'].forEach((label, row) => {
+        const mark = document.createElement('span');
+        mark.className = 'st-weekday';
+        mark.textContent = label;
+        mark.style.gridColumn = '1';
+        mark.style.gridRow = String(row + 1);
+        mark.setAttribute('aria-hidden', 'true');
+        days.append(mark);
+      });
+      const longDate = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+      model.days.forEach((day, offset) => {
+        const week = Math.floor(offset / 7);
+        const showMonth = week === 0
+          ? day.date.getMonth() === model.days[7].date.getMonth()
+          : day.date.getMonth() !== model.days[offset - 7].date.getMonth();
+        if (offset % 7 === 0 && showMonth) {
+          const label = document.createElement('span');
+          label.textContent = (day.date.getMonth() + 1) + '月';
+          label.style.gridColumn = (week + 2) + ' / span ' + Math.min(2, 12 - week);
+          months.append(label);
+        }
+        const cell = document.createElement(day.future ? 'span' : 'button');
+        cell.className = day.future ? 'st-day-future' : 'st-day cursor-interaction';
+        cell.style.gridColumn = String(week + 2);
+        cell.style.gridRow = String(offset % 7 + 1);
+        if (day.future) cell.setAttribute('aria-hidden', 'true');
+        else {
+          cell.type = 'button';
+          cell.dataset.day = day.key;
+          cell.dataset.count = String(day.count);
+          cell.setAttribute('aria-label', longDate.format(day.date) + '，' + day.count + ' 条记录');
+          cell.title = longDate.format(day.date) + ' · ' + day.count + ' 条记录';
+          cell.setAttribute('aria-pressed', String(day.key === selectedDay && !state.historyOpen));
+          if (day.key === model.todayKey) cell.setAttribute('aria-current', 'date');
+        }
+        days.append(cell);
+      });
+      calendarSignature = signature;
+      if (focusedDay) days.querySelector('[data-day="' + focusedDay + '"]')?.focus({ preventScroll: true });
+      if (previousPage !== String(calendarPage)) {
+        const viewport = root.querySelector('.st-calendar-scroll');
+        viewport.scrollLeft = viewport.scrollWidth;
+      }
+    }
+    // The all-records switch may change without changing dates or record counts.
+    days.querySelectorAll('button[data-day]').forEach(cell => cell.setAttribute('aria-pressed', String(cell.dataset.day === selectedDay && !state.historyOpen)));
+    const selectedEntries = state.historyOpen ? state.entries : (model.buckets.get(selectedDay) || []);
+    const selectedDate = model.days.find(day => day.key === selectedDay).date;
+    const selectedLabel = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric' }).format(selectedDate);
+    part('day-title').textContent = state.historyOpen ? '全部记录 · ' + state.entries.length + ' 条' : selectedLabel + (selectedDay === model.todayKey ? ' · 今天' : '') + ' · ' + selectedEntries.length + ' 条记录';
+    list.replaceChildren();
+    if (!selectedEntries.length) {
+      const empty = document.createElement('li');
+      empty.className = 'st-history-empty';
+      empty.textContent = state.historyOpen ? '还没有记录。' : '这一天没有记录。';
+      list.append(empty);
+    }
+    selectedEntries.forEach(entry => {
+      const item = document.createElement('li');
+      const time = document.createElement('time');
+      time.dateTime = entry.at;
+      time.textContent = state.historyOpen ? formatTime(entry.at) : new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date(entry.at));
+      const label = document.createElement('span');
+      label.textContent = '服药记录';
+      item.append(time, label);
+      list.append(item);
+    });
+  }
   function render() {
     root.dataset.strength = settings.strength;
     const hasEntries = state.entries.length > 0;
@@ -184,19 +343,9 @@
     part('sound-label').textContent = audioUnavailable ? '音效不可用' : settings.sound ? '音效 开' : '音效 关';
     sound.setAttribute('aria-pressed', String(settings.sound));
     sound.setAttribute('aria-label', audioUnavailable ? '音效不可用，点击重试' : settings.sound ? '关闭音效' : '开启音效');
-    history.setAttribute('aria-expanded', String(state.historyOpen));
-    history.textContent = '查看记录（' + state.entries.length + '）';
-    list.hidden = !state.historyOpen;
-    list.replaceChildren();
-    state.entries.forEach((entry) => {
-      const item = document.createElement('li');
-      const date = document.createElement('span');
-      const label = document.createElement('span');
-      date.textContent = formatTime(entry.at);
-      label.textContent = '服药记录';
-      item.append(date, label);
-      list.append(item);
-    });
+    history.setAttribute('aria-pressed', String(state.historyOpen));
+    history.textContent = state.historyOpen ? '返回按天查看' : '全部记录（' + state.entries.length + '）';
+    renderHeatmap();
   }
   async function playSound() {
     if (!settings.sound || playingAudio) return;
@@ -243,6 +392,9 @@
     try {
       await persistEntries(next);
       state.entries = next;
+      calendarPage = 0;
+      selectedDay = localDayKey(entry.at);
+      state.historyOpen = false;
       message = '这次也记住了。';
       readyAt = Date.now() + cooldownMs;
       render();
@@ -281,6 +433,15 @@
     }
   });
   history.addEventListener('click', () => { state.historyOpen = !state.historyOpen; render(); });
+  part('calendar-days').addEventListener('click', event => {
+    const day = event.target.closest('button[data-day]');
+    if (!day) return;
+    selectedDay = day.dataset.day;
+    state.historyOpen = false;
+    render();
+  });
+  action('previous-period').addEventListener('click', () => { calendarPage += 1; selectedDay = null; state.historyOpen = false; render(); });
+  action('next-period').addEventListener('click', () => { calendarPage = Math.max(0, calendarPage - 1); selectedDay = null; state.historyOpen = false; render(); });
   sound.addEventListener('click', () => { audioUnavailable = false; settings.sound = !settings.sound; render(); });
   applySaved(window.openai && window.openai.widgetState);
   render();
@@ -288,7 +449,7 @@
     const globals = event.detail && event.detail.globals;
     if (!writing && globals && Object.prototype.hasOwnProperty.call(globals, 'widgetState')) { applySaved(globals.widgetState); render(); }
   });
-  setInterval(refreshElapsed, 30000);
+  setInterval(() => { refreshElapsed(); renderHeatmap(); }, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
   if (globalThis.Tweak) {
     const tweak = new Tweak({ container: root.querySelector('.st-app'), onChange: render });
