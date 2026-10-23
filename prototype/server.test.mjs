@@ -75,6 +75,30 @@ test('stale note writes return a conflict and preserve the newer text', async t 
   assert.equal(stale.body.error.current.state.entries.find(entry => entry.id === 'entry-note').note, '第一份备注');
 });
 
+test('journal deletion is persistent, idempotent, and rejects stale deletes', async t => {
+  const dataDir = await mkdtemp(path.join(os.tmpdir(), 'life-save-server-'));
+  t.after(() => rm(dataDir, { recursive: true, force: true }));
+  const { server, origin } = await startServer(dataDir);
+  t.after(() => stopServer(server));
+
+  const created = await request(origin, '/api/actions', { space: 'default', action: 'save_journal', requestId: 'journal-create', payload: { id: 'journal-delete', text: '准备删除的随手记', at: '2026-10-23T05:00:00.000Z' } });
+  assert.equal(created.status, 200);
+  const savedJournal = created.body.state.journal.find(item => item.id === 'journal-delete');
+  assert(savedJournal);
+
+  const stale = await request(origin, '/api/actions', { space: 'default', action: 'delete_journal', requestId: 'journal-delete-stale', payload: { id: 'journal-delete', expectedUpdatedAt: '2026-10-22T05:00:00.000Z', at: '2026-10-23T05:01:00.000Z' } });
+  assert.equal(stale.status, 409);
+  assert.equal(stale.body.error.code, 'conflict');
+  assert.equal(stale.body.error.current.state.journal.length, 1);
+
+  const deleted = await request(origin, '/api/actions', { space: 'default', action: 'delete_journal', requestId: 'journal-delete', payload: { id: 'journal-delete', expectedUpdatedAt: savedJournal.updatedAt, at: '2026-10-23T05:02:00.000Z' } });
+  assert.equal(deleted.status, 200);
+  assert.equal(deleted.body.state.journal.length, 0);
+  const retry = await request(origin, '/api/actions', { space: 'default', action: 'delete_journal', requestId: 'journal-delete', payload: { id: 'journal-delete', expectedUpdatedAt: savedJournal.updatedAt, at: '2026-10-23T05:03:00.000Z' } });
+  assert.equal(retry.status, 200);
+  assert.equal((await request(origin, '/api/bootstrap?space=default')).body.state.journal.length, 0);
+});
+
 test('test spaces are isolated from the formal archive', async t => {
   const dataDir = await mkdtemp(path.join(os.tmpdir(), 'life-save-server-'));
   t.after(() => rm(dataDir, { recursive: true, force: true }));

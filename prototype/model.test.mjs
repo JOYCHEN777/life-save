@@ -115,19 +115,22 @@ test('notes attach to exactly one event, preserve time, counts, reminders and ro
   assert.equal(s.entries.length, 1);
   assert.equal(timelineItems(s, 'notes').length, 0);
 });
-test('standalone journal edits retain original date and never add completion counts', async () => {
-  const { saveJournal, timelineItems } = await import('./model.js');
+test('standalone journal can be deleted without affecting completion counts', async () => {
+  const { deleteJournal, saveJournal, timelineItems } = await import('./model.js');
   let s = saveJournal(initial(), 'post', '今天的小发现 <script>', now());
-  s = saveJournal(s, 'post', '修改后的文字', new Date(now().getTime() + 60000), true);
   assert.equal(s.journal.length, 1); assert.equal(s.entries.length, 0);
   assert.equal(s.journal[0].at, now().toISOString());
-  assert.equal(timelineItems(s, 'journal')[0].text, '修改后的文字');
+  assert.equal(timelineItems(s, 'journal')[0].text, '今天的小发现 <script>');
   assert.equal(timelineItems(s, 'notes').length, 0);
   assert.equal(calendarModel(s.entries, now()).activeDays, 0);
   assert.throws(() => saveJournal(s, 'new', '   ', now()));
   assert.throws(() => saveJournal(s, 'new', 'a'.repeat(1001), now()));
   assert.throws(() => saveJournal(s, 'post', 'duplicate', now()));
-  assert.throws(() => saveJournal(s, 'missing', 'edit', now(), true));
+  s = deleteJournal(s, 'post');
+  assert.equal(s.journal.length, 0);
+  assert.equal(timelineItems(s, 'journal').length, 0);
+  s = deleteJournal(s, 'post');
+  assert.equal(s.entries.length, 0);
   validateState(s);
 });
 test('memory candidates only include real older text and avoid repeats before wrapping', async () => {

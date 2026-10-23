@@ -21,6 +21,7 @@ const paths = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   edit: '<path d="m15 4 5 5M4 20l5-1L20 8a3.5 3.5 0 0 0-5-5L4 14ZM3 21h18"/>',
+  trash: '<path d="M4 7h16M10 11v6m4-6v6M9 7V4h6v3m-9 0 1 13h10l1-13"/>',
   arrow: '<path d="m9 5 7 7-7 7"/>',
 };
 const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.sparkles}</svg>`;
@@ -307,7 +308,7 @@ function feedHTML() {
       const day = localDayKey(item.at), newDay = day !== previousDay; previousDay = day;
       const journal = item.type === 'journal', card = journal ? null : state.cards.find(c => c.id === item.cardId);
       const feedId = `${item.type}:${item.id}`;
-      return `${newDay ? `<h2 class="feed-day">${day === localDayKey(new Date()) ? '今天' : day.replace(/-/g, '/')}<span>${shortDate(item.at)}</span></h2>` : ''}<article class="feed-item ${journal ? 'journal-item' : ''} ${ui.feedFocusId === feedId ? 'is-memory-focus' : ''}" data-feed-id="${esc(feedId)}" tabindex="-1"><div class="feed-symbol" ${card ? `style="color:${colorFor(card)}"` : ''}>${icon(journal ? 'edit' : card.icon)}</div><div class="feed-content"><div class="feed-item-head"><h3>${journal ? '随手记' : esc(card.title)}</h3><time datetime="${esc(item.at)}">${preciseTime(item.at)}</time></div><span class="feed-kind">${journal ? '此刻的想法' : card.kind === 'confirm' ? '确认完成' : '随手记录'}</span>${journal || item.note ? `<p class="feed-text">${esc(journal ? item.text : item.note)}</p>` : ''}${!journal && item.note ? `<span class="note-date">补充于 ${fullTime(item.noteUpdatedAt)}</span>` : journal && item.updatedAt !== item.at ? `<span class="note-date">编辑于 ${fullTime(item.updatedAt)}</span>` : ''}<div class="feed-item-actions">${journal ? `<button class="text-button" data-action="edit-journal" data-id="${esc(item.id)}" ${readonly ? 'disabled' : ''}>${icon('edit')}修改文字</button>` : `${noteButton(item)}<button class="text-button" data-action="detail" data-id="${esc(card.id)}">查看卡片记录 ${icon('arrow')}</button>`}</div></div></article>`;
+      return `${newDay ? `<h2 class="feed-day">${day === localDayKey(new Date()) ? '今天' : day.replace(/-/g, '/')}<span>${shortDate(item.at)}</span></h2>` : ''}<article class="feed-item ${journal ? 'journal-item' : ''} ${ui.feedFocusId === feedId ? 'is-memory-focus' : ''}" data-feed-id="${esc(feedId)}" tabindex="-1"><div class="feed-symbol" ${card ? `style="color:${colorFor(card)}"` : ''}>${icon(journal ? 'edit' : card.icon)}</div><div class="feed-content"><div class="feed-item-head"><h3>${journal ? '随手记' : esc(card.title)}</h3><time datetime="${esc(item.at)}">${preciseTime(item.at)}</time></div><span class="feed-kind">${journal ? '此刻的想法' : card.kind === 'confirm' ? '确认完成' : '随手记录'}</span>${journal || item.note ? `<p class="feed-text">${esc(journal ? item.text : item.note)}</p>` : ''}${!journal && item.note ? `<span class="note-date">补充于 ${fullTime(item.noteUpdatedAt)}</span>` : ''}<div class="feed-item-actions">${journal ? `<button class="text-button danger" data-action="delete-journal" data-id="${esc(item.id)}" data-updated-at="${esc(item.updatedAt)}" ${readonly ? 'disabled' : ''} aria-label="删除这条随手记">${icon('trash')}删除</button>` : `${noteButton(item)}<button class="text-button" data-action="detail" data-id="${esc(card.id)}">查看卡片记录 ${icon('arrow')}</button>`}</div></div></article>`;
     }).join('') || `<div class="feed-empty">${icon('journal')}<h2>${ui.feedFilter === 'notes' ? '还没有补充过文字' : ui.feedFilter === 'journal' ? '留下一点此刻的想法' : '生活的小事，从这里留下'}</h2><p>${ui.feedFilter === 'notes' ? '在任意记录旁点「补一句」，就会出现在这里。' : '记录、确认，或写一条随手记，都会留在这里。'}</p></div>`}</div>
     ${items.length > shown.length ? '<button class="button secondary feed-more" data-action="feed-more">再往前看看</button>' : shown.length ? '<p class="feed-end">暂时翻到这里，接下来留给生活。</p>' : ''}`;
 }
@@ -315,19 +316,19 @@ function openComposer(type, id = null) {
   const item = type === 'entry' ? state.entries.find(e => e.id === id) : state.journal.find(p => p.id === id);
   if (id && !item) { toast('这条记录已经不存在了。'); return; }
   const note = type === 'entry', card = note ? state.cards.find(c => c.id === item.cardId) : null;
-  ui.composer = { type, id: id || crypto.randomUUID(), requestId: crypto.randomUUID(), editing: !!item, expected: item ? (note ? item.noteUpdatedAt || null : item.updatedAt) : null };
+  ui.composer = { type, id: id || crypto.randomUUID(), requestId: crypto.randomUUID(), expected: note ? item.noteUpdatedAt || null : null };
   const text = note ? item.note || '' : item?.text || '';
-  $('#composer').innerHTML = `<div class="dialog-header"><div><div class="eyebrow">${note ? '给这一刻，多留一点细节' : '只留给自己，想写什么都可以'}</div><h2 id="composer-title">${note ? '补一句' : item ? '修改随手记' : '写一条随手记'}</h2></div><button class="icon-button" data-action="close-composer" aria-label="关闭文字编辑">×</button></div><form id="text-form" class="dialog-form"><div class="composer-context">${icon(note ? card.icon : 'edit')}<div><strong>${note ? esc(card.title) : '独立随手记'}</strong><span>${note ? fullTime(item.at) + ' 的记录' : '不必关联卡片，也不用完成任务'}</span></div></div><label class="composer-label" for="note-text">${note ? '想补充什么？' : '此刻想说的话'}</label><textarea id="note-text" name="text" maxlength="1000" rows="6" ${note ? '' : 'required'} placeholder="${note ? '例如：今天拌在罐头里，终于愿意吃了。' : '今天的小发现、心情，或突然想到的一句话……'}">${esc(text)}</textarea><div class="composer-meta"><span>${note ? '记录已经完成，补一句不增加次数。清空可移除备注。' : '仅保存在本机的生活动态中。'}</span><span id="text-count">${text.length}/1000</span></div><p class="error-text" id="text-error" role="alert" hidden></p><div class="form-actions"><button type="button" class="button secondary" data-action="close-composer">先不写了</button><button type="submit" class="button primary" ${readonly ? 'disabled' : ''}>${note ? '保存备注' : '保存随手记'}</button></div></form>`;
+  $('#composer').innerHTML = `<div class="dialog-header"><div><div class="eyebrow">${note ? '给这一刻，多留一点细节' : '只留给自己，想写什么都可以'}</div><h2 id="composer-title">${note ? '补一句' : '写一条随手记'}</h2></div><button class="icon-button" data-action="close-composer" aria-label="关闭文字编辑">×</button></div><form id="text-form" class="dialog-form"><div class="composer-context">${icon(note ? card.icon : 'edit')}<div><strong>${note ? esc(card.title) : '独立随手记'}</strong><span>${note ? fullTime(item.at) + ' 的记录' : '不必关联卡片，也不用完成任务'}</span></div></div><label class="composer-label" for="note-text">${note ? '想补充什么？' : '此刻想说的话'}</label><textarea id="note-text" name="text" maxlength="1000" rows="6" ${note ? '' : 'required'} placeholder="${note ? '例如：今天拌在罐头里，终于愿意吃了。' : '今天的小发现、心情，或突然想到的一句话……'}">${esc(text)}</textarea><div class="composer-meta"><span>${note ? '记录已经完成，补一句不增加次数。清空可移除备注。' : '仅保存在本机的生活动态中，保存后不能修改。'}</span><span id="text-count">${text.length}/1000</span></div><p class="error-text" id="text-error" role="alert" hidden></p><div class="form-actions"><button type="button" class="button secondary" data-action="close-composer">先不写了</button><button type="submit" class="button primary" ${readonly ? 'disabled' : ''}>${note ? '保存备注' : '保存随手记'}</button></div></form>`;
   $('#composer').showModal(); $('#note-text').focus();
 }
 async function submitComposer(form) {
   if (writing || readonly) return;
-  const { type, id, requestId, editing, expected } = ui.composer, text = new FormData(form).get('text'), submit = form.querySelector('[type=submit]');
+  const { type, id, requestId, expected } = ui.composer, text = new FormData(form).get('text'), submit = form.querySelector('[type=submit]');
   submit.disabled = true;
   const success = await change(type === 'entry' ? 'save_entry_note' : 'save_journal', type === 'entry'
     ? { entryId: id, text, expectedNoteUpdatedAt: expected, at: new Date().toISOString() }
-    : { id, text, editing, expectedUpdatedAt: expected, at: new Date().toISOString() }, type === 'entry' ? text.trim() ? '这句话，也记住了。' : '备注已移除，原记录仍在。' : '这段生活，留下来了。', null, null, requestId);
-  if (success) { $('#composer').close(); if (type === 'journal' && !editing) { ui.feedFilter = 'all'; ui.feedLimit = 40; navigate('feed'); } }
+    : { id, text, at: new Date().toISOString() }, type === 'entry' ? text.trim() ? '这句话，也记住了。' : '备注已移除，原记录仍在。' : '这段生活，留下来了。', null, null, requestId);
+  if (success) { $('#composer').close(); if (type === 'journal') { ui.feedFilter = 'all'; ui.feedLimit = 40; navigate('feed'); } }
   else { $('#text-error').textContent = $('#error-banner').textContent; $('#text-error').hidden = false; submit.disabled = readonly; }
 }
 document.addEventListener('input', event => {
@@ -497,7 +498,10 @@ document.addEventListener('click', async event => {
   }
   if (action === 'note') openComposer('entry', id);
   if (action === 'new-journal') openComposer('journal');
-  if (action === 'edit-journal') openComposer('journal', id);
+  if (action === 'delete-journal') {
+    if (!window.confirm('确定删除这条随手记吗？删除后无法恢复。')) return;
+    await change('delete_journal', { id, expectedUpdatedAt: button.dataset.updatedAt, at: new Date().toISOString() }, '随手记已删除。', null, null, crypto.randomUUID());
+  }
   if (action === 'close-composer') $('#composer').close();
   if (action === 'preview-theme') {
     const theme = THEMES.find(item => item.id === button.dataset.themeId);

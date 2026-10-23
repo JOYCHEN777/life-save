@@ -86,12 +86,17 @@ export function saveEntryNote(state, entryId, text, now) {
   }) };
 }
 
-export function saveJournal(state, id, text, now, editing = false) {
+export function saveJournal(state, id, text, now) {
   requireValue(typeof text === 'string' && text.trim().length > 0 && text.length <= 1000, '写一点内容吧，最多 1000 字');
   const existing = state.journal.find(p => p.id === id);
-  requireValue(editing ? !!existing : !existing, editing ? '这条随手记已经不存在了' : '这条随手记已保存');
-  const post = { id, text: text.trim(), at: existing?.at || now.toISOString(), updatedAt: now.toISOString() };
-  return { ...state, journal: editing ? state.journal.map(p => p.id === id ? post : p) : [post, ...state.journal] };
+  requireValue(!existing, '这条随手记已经保存');
+  const post = { id, text: text.trim(), at: now.toISOString(), updatedAt: now.toISOString() };
+  return { ...state, journal: [post, ...state.journal] };
+}
+
+export function deleteJournal(state, id) {
+  requireValue(typeof id === 'string' && id.trim().length > 0, '随手记标识无效');
+  return { ...state, journal: state.journal.filter(post => post.id !== id) };
 }
 
 export const heatLevel = count => count <= 0 ? 0 : count === 1 ? 1 : count <= 3 ? 2 : count <= 6 ? 3 : 4;

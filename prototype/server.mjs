@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseSync } from 'node:sqlite';
-import { addEntry, createInitialState, migrateState, saveEntryNote, saveJournal, startRound, validateState } from './model.js';
+import { addEntry, createInitialState, deleteJournal, migrateState, saveEntryNote, saveJournal, startRound, validateState } from './model.js';
 import { APPEARANCE_VERSION, cloneAppearance, createDefaultAppearance, MAX_WALLPAPER_DATA_LENGTH, validateAppearance } from './appearance.js';
 
 export const DEFAULT_PORT = 8787;
@@ -326,15 +326,20 @@ export class SQLiteRepository {
       return saveEntryNote(state, payload.entryId, payload.text, now);
     }
     if (action === 'save_journal') {
+      requireCondition(safeText(payload.id, 100), '随手记提交缺少标识。');
       const existing = state.journal.find(item => item.id === payload.id);
-      if (payload.editing) {
-        requireCondition(existing, '这条随手记已经不存在了。', 'conflict');
-        if (existing.updatedAt !== payload.expectedUpdatedAt) throw new ServiceError('这条随手记已在另一页面修改；输入内容仍保留，请重新打开后核对。', { code: 'conflict', status: 409, current: this.snapshot() });
-      } else if (existing) {
+      if (existing) {
         if (existing.text === String(payload.text || '').trim()) return state;
         throw new ServiceError('这条随手记已经在另一页面保存。', { code: 'conflict', status: 409, current: this.snapshot() });
       }
-      return saveJournal(state, payload.id, payload.text, now, Boolean(payload.editing));
+      return saveJournal(state, payload.id, payload.text, now);
+    }
+    if (action === 'delete_journal') {
+      requireCondition(safeText(payload.id, 100), '删除随手记缺少标识。');
+      const existing = state.journal.find(item => item.id === payload.id);
+      if (!existing) return state;
+      if (existing.updatedAt !== payload.expectedUpdatedAt) throw new ServiceError('这条随手记已在另一页面发生变化，请刷新后确认是否删除。', { code: 'conflict', status: 409, current: this.snapshot() });
+      return deleteJournal(state, payload.id);
     }
     if (action === 'start_round') return startRound(state, payload.sceneId, now, payload.roundId);
     if (action === 'update_setting') {
