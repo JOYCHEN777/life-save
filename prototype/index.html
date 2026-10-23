@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f7f2"><meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:* http://localhost:* http://[::1]:*; object-src 'none'; base-uri 'none'; form-action 'self'">
 <title>随手存档 · 生活小事，有处安放</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23cee996'/%3E%3Cpath d='m11 20 6 6 12-13' fill='none' stroke='%232d4a34' stroke-width='4'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./styles.css"><script type="module" src="./app.js"></script>
@@ -23,6 +23,7 @@
 </header><div class="error-banner" id="error-banner" role="alert" hidden></div><div id="view" class="view"></div><noscript>请开启 JavaScript，以使用本地记录功能。</noscript></main>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
+<dialog id="composer" aria-labelledby="composer-title"></dialog>
 <dialog id="editor" aria-labelledby="editor-title"></dialog><dialog id="details" aria-labelledby="details-title"></dialog>
 </body>
 </html>

@@ -1,1 +1,1 @@
-{"private":true,"type":"module","scripts":{"test":"node --test model.test.mjs store.test.mjs"}}
+{"private":true,"type":"module","scripts":{"test":"node --test model.test.mjs store.test.mjs appearance.test.mjs sqlite-store.test.mjs server.test.mjs"}}

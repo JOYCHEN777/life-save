@@ -1,4 +1,4 @@
-import { createInitialState, validateState } from './model.js';
+import { createInitialState, validateState, migrateState } from './model.js';
 
 export function createStore(storage, pathname, search, now = new Date()) {
   const suffix = JSON.stringify([pathname, search]);
@@ -6,7 +6,19 @@ export function createStore(storage, pathname, search, now = new Date()) {
   const legacyKey = `codex:visualization-widget-state-v2:${suffix}`;
   let raw = storage.getItem(key);
   let state;
-  if (raw !== null) state = validateState(JSON.parse(raw));
+  if (raw !== null) {
+    const previous = JSON.parse(raw);
+    state = migrateState(previous);
+    if (previous.version !== state.version) {
+      // Retain the storage address so stale v3 tabs cannot fork or overwrite v4 history.
+      const backupKey = `${key}:before-v4`;
+      if (storage.getItem(backupKey) === null) storage.setItem(backupKey, raw);
+      const serialized = JSON.stringify(state);
+      if (storage.getItem(key) !== raw) throw new Error('另一个页面更新了记录，请刷新后完成升级。');
+      storage.setItem(key, serialized);
+      raw = serialized;
+    }
+  }
   else {
     const legacyRaw = storage.getItem(legacyKey);
     state = createInitialState(now, legacyRaw === null ? null : JSON.parse(legacyRaw));

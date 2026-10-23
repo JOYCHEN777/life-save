@@ -11,7 +11,7 @@ export function createInitialState(now = new Date(), legacy = null) {
   const createdAt = now.toISOString();
   const card = (id, title, icon, tone, kind, sceneId = null, reminder = { type: 'none' }) => ({ id, title, icon, tone, kind, sceneId, reminder, createdAt });
   const state = {
-    version: 3, revision: 0,
+    version: 4, revision: 0,
     cards: [
       card('medication', '过敏药', 'pill', 'mint', 'record'),
       card('sheets', '换床单', 'bed', 'blue', 'record', null, { type: 'interval', minutes: 10080 }),
@@ -25,7 +25,7 @@ export function createInitialState(now = new Date(), legacy = null) {
       { id: 'outing', title: '出门前', mode: 'manual', roundId: `outing:${createdAt}`, startedAt: createdAt },
       { id: 'cats', title: '猫咪照顾', mode: 'daily', roundId: 'daily', startedAt: createdAt },
     ],
-    entries: [], settings: { sound: false, strength: 'crisp' },
+    entries: [], journal: [], settings: { sound: false, strength: 'crisp' },
   };
   const old = legacy?.privateContent;
   if (legacy !== null) {
@@ -44,7 +44,7 @@ export function createInitialState(now = new Date(), legacy = null) {
 }
 
 export function validateState(s) {
-  requireValue(s && s.version === 3 && Number.isSafeInteger(s.revision) && s.revision >= 0, '记录版本无法读取');
+  requireValue(s && [3, 4].includes(s.version) && Number.isSafeInteger(s.revision) && s.revision >= 0, '记录版本无法读取');
   requireValue(Array.isArray(s.cards) && Array.isArray(s.scenes) && Array.isArray(s.entries), '记录结构不完整');
   for (const rows of [s.cards, s.scenes, s.entries]) {
     requireValue(rows.every(row => row && typeof row.id === 'string' && row.id.length > 0) && unique(rows), '记录标识重复或缺失');
@@ -61,7 +61,72 @@ export function validateState(s) {
     if (r.type === 'daily') requireValue(typeof r.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(r.time), '每日提醒时间无效');
   }
   for (const e of s.entries) requireValue(s.cards.some(c => c.id === e.cardId) && validDate(e.at) && (e.roundId === null || typeof e.roundId === 'string'), '历史记录无法读取');
+  for (const e of s.entries) {
+    if (e.note !== undefined) requireValue(typeof e.note === 'string' && e.note.trim().length > 0 && e.note.length <= 1000 && validDate(e.noteUpdatedAt), '备注无法读取');
+  }
+  if (s.version === 4) {
+    requireValue(Array.isArray(s.journal) && unique(s.journal), '随手记无法读取');
+    for (const p of s.journal) requireValue(p && typeof p.id === 'string' && p.id.length > 0 && typeof p.text === 'string' && p.text.trim().length > 0 && p.text.length <= 1000 && validDate(p.at) && validDate(p.updatedAt), '随手记无法读取');
+  }
   return s;
+}
+
+export function migrateState(value) {
+  const s = validateState(value);
+  return s.version === 4 ? s : validateState({ ...s, version: 4, revision: s.revision + 1, journal: [] });
+}
+
+export function saveEntryNote(state, entryId, text, now) {
+  requireValue(state.entries.some(e => e.id === entryId), '这条记录已被撤销，文字仍在输入框中。');
+  requireValue(typeof text === 'string' && text.length <= 1000, '最多写 1000 字');
+  return { ...state, entries: state.entries.map(e => {
+    if (e.id !== entryId) return e;
+    const { note, noteUpdatedAt, ...entry } = e;
+    return text.trim() ? { ...entry, note: text.trim(), noteUpdatedAt: now.toISOString() } : entry;
+  }) };
+}
+
+export function saveJournal(state, id, text, now, editing = false) {
+  requireValue(typeof text === 'string' && text.trim().length > 0 && text.length <= 1000, '写一点内容吧，最多 1000 字');
+  const existing = state.journal.find(p => p.id === id);
+  requireValue(editing ? !!existing : !existing, editing ? '这条随手记已经不存在了' : '这条随手记已保存');
+  const post = { id, text: text.trim(), at: existing?.at || now.toISOString(), updatedAt: now.toISOString() };
+  return { ...state, journal: editing ? state.journal.map(p => p.id === id ? post : p) : [post, ...state.journal] };
+}
+
+export const heatLevel = count => count <= 0 ? 0 : count === 1 ? 1 : count <= 3 ? 2 : count <= 6 ? 3 : 4;
+export function dayMarkers(cards, entries) {
+  const counts = new Map();
+  for (const e of entries) counts.set(e.cardId, (counts.get(e.cardId) || 0) + 1);
+  const visible = cards.slice(0, cards.length > 4 ? 3 : 4);
+  return { slots: visible.map(c => ({ cardId: c.id, count: counts.get(c.id) || 0 })), overflow: cards.slice(visible.length).filter(c => counts.has(c.id)).length };
+}
+export function timelineItems(state, filter = 'all') {
+  const entries = filter === 'journal' ? [] : state.entries.filter(e => filter !== 'notes' || e.note).map(e => ({ ...e, type: 'entry' }));
+  const posts = filter === 'notes' ? [] : state.journal.map(p => ({ ...p, type: 'journal' }));
+  return [...entries, ...posts].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+}
+
+export function memoryCandidates(state, now = new Date()) {
+  const today = localDayKey(now);
+  const entries = state.entries
+    .filter(entry => entry.note && localDayKey(entry.at) < today)
+    .map(entry => ({ id: `entry:${entry.id}`, type: 'entry', sourceId: entry.id, cardId: entry.cardId, at: entry.at, text: entry.note }));
+  const journal = state.journal
+    .filter(post => localDayKey(post.at) < today)
+    .map(post => ({ id: `journal:${post.id}`, type: 'journal', sourceId: post.id, at: post.at, text: post.text }));
+  return [...entries, ...journal].sort((a, b) => Date.parse(b.at) - Date.parse(a.at) || a.id.localeCompare(b.id));
+}
+
+export function drawMemory(candidates, seenIds = new Set(), random = Math.random) {
+  if (!candidates.length) return { item: null, seenIds: new Set(), wrapped: false };
+  const unseen = candidates.filter(candidate => !seenIds.has(candidate.id));
+  const wrapped = unseen.length === 0;
+  const pool = wrapped ? candidates : unseen;
+  const index = Math.min(pool.length - 1, Math.floor(Math.max(0, random()) * pool.length));
+  const item = pool[index];
+  const nextSeenIds = wrapped ? new Set([item.id]) : new Set([...seenIds, item.id]);
+  return { item, seenIds: nextSeenIds, wrapped };
 }
 
 export const cardEntries = (state, cardId) => state.entries.filter(e => e.cardId === cardId);

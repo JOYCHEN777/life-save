@@ -91,3 +91,70 @@ test('calendar leap/year boundaries and fixed-time schedule handle daylight savi
   process.env.TZ = 'Asia/Shanghai';
   assert(calendarModel([], new Date(2024, 2, 1, 12)).days.some(d => d.key === '2024-02-29'));
 });
+
+test('notes attach to exactly one event, preserve time, counts, reminders and rounds', async () => {
+  const { saveEntryNote, timelineItems } = await import('./model.js');
+  let s = addEntry(initial(), 'cat-breakfast', now(), 'breakfast');
+  s = addEntry(s, 'medication', now(), 'med');
+  const before = structuredClone(s.entries), later = new Date(now().getTime() + 3600000);
+  s = saveEntryNote(s, 'breakfast', '  拌在罐头里\n终于愿意吃了  ', later);
+  assert.equal(s.entries.length, 2);
+  assert.equal(s.entries[1].note, '拌在罐头里\n终于愿意吃了');
+  for (let i = 0; i < before.length; i++) {
+    assert.equal(s.entries[i].at, before[i].at);
+    assert.equal(s.entries[i].roundId, before[i].roundId);
+  }
+  assert.equal(s.entries[0].note, undefined);
+  assert.equal(calendarModel(s.entries, now()).days.find(d => d.key === '2026-10-22').count, 2);
+  assert.equal(timelineItems(s, 'notes').length, 1);
+  assert.equal(timelineItems(s)[0].id, 'med');
+  assert.throws(() => saveEntryNote(s, 'missing', 'hello', later));
+  s = saveEntryNote(s, 'breakfast', '', later);
+  assert.equal(s.entries[1].note, undefined);
+  s = undoEntry(s, 'cat-breakfast');
+  assert.equal(s.entries.length, 1);
+  assert.equal(timelineItems(s, 'notes').length, 0);
+});
+test('standalone journal edits retain original date and never add completion counts', async () => {
+  const { saveJournal, timelineItems } = await import('./model.js');
+  let s = saveJournal(initial(), 'post', '今天的小发现 <script>', now());
+  s = saveJournal(s, 'post', '修改后的文字', new Date(now().getTime() + 60000), true);
+  assert.equal(s.journal.length, 1); assert.equal(s.entries.length, 0);
+  assert.equal(s.journal[0].at, now().toISOString());
+  assert.equal(timelineItems(s, 'journal')[0].text, '修改后的文字');
+  assert.equal(timelineItems(s, 'notes').length, 0);
+  assert.equal(calendarModel(s.entries, now()).activeDays, 0);
+  assert.throws(() => saveJournal(s, 'new', '   ', now()));
+  assert.throws(() => saveJournal(s, 'new', 'a'.repeat(1001), now()));
+  assert.throws(() => saveJournal(s, 'post', 'duplicate', now()));
+  assert.throws(() => saveJournal(s, 'missing', 'edit', now(), true));
+  validateState(s);
+});
+test('memory candidates only include real older text and avoid repeats before wrapping', async () => {
+  const { drawMemory, memoryCandidates, saveEntryNote, saveJournal } = await import('./model.js');
+  const today = new Date('2026-10-23T10:00:00+08:00');
+  let s = saveJournal(initial(), 'old-post', '以前写下的一句话', new Date('2026-10-20T10:00:00+08:00'));
+  s = saveJournal(s, 'today-post', '今天还不算以前', today);
+  s = addEntry(s, 'medication', new Date('2026-10-19T10:00:00+08:00'), 'old-entry');
+  s = saveEntryNote(s, 'old-entry', '给旧记录补充的细节', new Date('2026-10-19T10:05:00+08:00'));
+  s = addEntry(s, 'sheets', new Date('2026-10-18T10:00:00+08:00'), 'no-note');
+  const candidates = memoryCandidates(s, today);
+  assert.deepEqual(candidates.map(candidate => candidate.id), ['journal:old-post', 'entry:old-entry']);
+  assert.equal(candidates.every(candidate => candidate.text.length > 0), true);
+  const first = drawMemory(candidates, new Set(), () => 0);
+  const second = drawMemory(candidates, first.seenIds, () => 0);
+  assert.notEqual(first.item.id, second.item.id);
+  assert.equal(second.wrapped, false);
+  const wrapped = drawMemory(candidates, second.seenIds, () => 0);
+  assert.equal(wrapped.wrapped, true);
+  assert.equal(wrapped.item.id, 'journal:old-post');
+});
+test('heatmap uses fixed monotonic buckets; category slots remain stable with repeats and overflow', async () => {
+  const { heatLevel, dayMarkers } = await import('./model.js');
+  assert.deepEqual([0, 1, 2, 3, 4, 6, 7, 50].map(heatLevel), [0, 1, 2, 2, 3, 3, 4, 4]);
+  const cards = ['a', 'b', 'c', 'd', 'e', 'f'].map(id => ({ id }));
+  const marks = dayMarkers(cards, [{ cardId: 'b' }, { cardId: 'b' }, { cardId: 'd' }, { cardId: 'f' }]);
+  assert.deepEqual(marks.slots, [{ cardId: 'a', count: 0 }, { cardId: 'b', count: 2 }, { cardId: 'c', count: 0 }]);
+  assert.equal(marks.overflow, 2);
+  assert.equal(dayMarkers(cards.slice(0, 4), [{ cardId: 'd' }]).slots[3].count, 1);
+});
